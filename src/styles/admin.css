@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+
 /* ── ADMIN LAYOUT ───────────────────────────── */
 .admin-wrapper {
   display: flex;
@@ -199,4 +202,10 @@
   .admin-main {
     margin-left: 0;
   }
+}
+
+.admin-sidebar .nav-link {
+  display:     flex;
+  align-items: center;
+  gap:         0.75rem;
 }

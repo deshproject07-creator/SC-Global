@@ -62,17 +62,7 @@ const ContactForm = () => {
 
         {/* ── Section Header ── */}
         <div className="text-center mb-5">
-          <span
-            className="badge rounded-pill mb-3 px-3 py-2"
-            style={{
-              background: "#e8f0fe",
-              color: "#0d6efd",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-            }}
-          >
-            Get In Touch
-          </span>
+        
           <h2 className="section-title text-center">Contact Us</h2>
           <p
             className="text-muted mt-3"
