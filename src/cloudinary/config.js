@@ -12,10 +12,10 @@ export const uploadToCloudinary = async (file) => {
     throw new Error("Only JPG, PNG, and WEBP images are allowed.");
   }
 
-  // Validate file size (max 5MB)
-  const maxSize = 5 * 1024 * 1024;
+  // Validate file size (max 10MB)
+  const maxSize = 10 * 1024 * 1024;
   if (file.size > maxSize) {
-    throw new Error("Image size must be less than 5MB.");
+    throw new Error("Image size must be less than 10MB.");
   }
 
   const formData = new FormData();
