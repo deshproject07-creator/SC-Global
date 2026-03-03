@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight, FiArrowRight } from "react-icons/fi";
 
-import welcomeImg from "../../assets/images/company_images/SC-Global.jpeg";
+import welcomeImg from "../../assets/images/main_imgs/portmain_a.jpg";
 import cashewImg  from "../../assets/images/cashew_images/cashew_a.jpg";
 import riceImg    from "../../assets/images/rice_images/rice_a.jpg";
 import silverImg  from "../../assets/images/silver_images/silver_b.jpg";
