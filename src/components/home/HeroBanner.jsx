@@ -117,7 +117,7 @@ const HeroBanner = () => {
           width: 100%;
           overflow: hidden;
           background: #0a0f1e;
-          font-family: 'Syne', sans-serif;
+          font-family: 'Playfair Display', 'DM Sans', 'Syne', sans-serif;
         }
 
         /* Desktop height - exactly as before */
@@ -126,44 +126,13 @@ const HeroBanner = () => {
           min-height: 560px;
         }
 
-        /* Mobile responsive heights */
+        /* Mobile - scale proportionally based on viewport width */
         @media (max-width: 768px) {
           .hero-root {
-            height: 60vh;
-            min-height: 400px;
-            max-height: 500px;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .hero-root {
-            height: 55vh;
-            min-height: 380px;
-            max-height: 450px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .hero-root {
-            height: 50vh;
-            min-height: 350px;
-            max-height: 400px;
-          }
-        }
-
-        @media (max-width: 375px) {
-          .hero-root {
-            height: 48vh;
-            min-height: 320px;
-            max-height: 380px;
-          }
-        }
-
-        @media (max-width: 320px) {
-          .hero-root {
-            height: 45vh;
-            min-height: 280px;
-            max-height: 350px;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio like desktop */
+            min-height: unset;
+            max-height: unset;
           }
         }
 
@@ -185,7 +154,7 @@ const HeroBanner = () => {
           z-index: 1; 
         }
 
-        /* Image container */
+        /* Image container - consistent for all devices */
         .hero-image-container {
           position: absolute;
           inset: 0;
@@ -194,8 +163,8 @@ const HeroBanner = () => {
           overflow: hidden;
         }
 
-        /* Desktop image - cover */
-        .hero-image-desktop {
+        /* Image styling - consistent for all devices */
+        .hero-image {
           width: 100%;
           height: 100%;
           object-fit: cover;
@@ -203,31 +172,11 @@ const HeroBanner = () => {
           transition: transform 6s ease;
         }
 
-        .hero-slide-layer.is-active .hero-image-desktop {
+        .hero-slide-layer.is-active .hero-image {
           transform: scale(1);
         }
 
-        /* Mobile image - contain with background */
-        .hero-image-mobile {
-          display: none;
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          object-position: center;
-          background-color: #0a0f1e;
-        }
-
-        @media (max-width: 768px) {
-          .hero-image-desktop {
-            display: none;
-          }
-          
-          .hero-image-mobile {
-            display: block;
-          }
-        }
-
-        /* Overlay - adjusted for mobile */
+        /* Overlay - consistent gradient for all devices */
         .hero-overlay {
           position: absolute;
           inset: 0;
@@ -239,53 +188,42 @@ const HeroBanner = () => {
           );
         }
 
-        @media (max-width: 768px) {
-          .hero-overlay {
-            background: linear-gradient(
-              0deg,
-              rgba(0,0,0,0.8) 0%,
-              rgba(0,0,0,0.4) 50%,
-              rgba(0,0,0,0.2) 100%
-            );
-          }
-        }
-
-        /* Content container */
+        /* Content container - positioned exactly the same */
         .hero-content {
           position: relative;
           z-index: 10;
           height: 100%;
           display: flex;
           align-items: center;
-          padding: 0 2rem;
+          padding: 0 4rem;
         }
 
+        /* Mobile content - scale padding proportionally */
         @media (max-width: 768px) {
           .hero-content {
-            align-items: flex-end;
-            padding: 0 1.5rem 3rem 1.5rem;
+            padding: 0 min(4rem, 8vw);
           }
         }
 
         @media (max-width: 480px) {
           .hero-content {
-            padding: 0 1rem 2rem 1rem;
+            padding: 0 min(3rem, 6vw);
           }
         }
 
-        /* Text wrapper */
+        /* Text wrapper - consistent positioning */
         .hero-text-wrap {
           max-width: 680px;
+          width: 100%;
         }
 
         @media (max-width: 768px) {
           .hero-text-wrap {
-            max-width: 100%;
-            text-align: left;
+            max-width: min(680px, 80%);
           }
         }
 
-        /* Subtitle pill */
+        /* Subtitle pill - scaled proportionally */
         .hero-subtitle-pill {
           display: inline-flex;
           align-items: center;
@@ -304,58 +242,46 @@ const HeroBanner = () => {
           animation: heroFadeUp 0.7s ease both;
         }
 
+        /* Mobile subtitle - scale font size based on viewport width */
         @media (max-width: 768px) {
           .hero-subtitle-pill {
-            font-size: clamp(0.65rem, 2vw, 0.8rem);
-            padding: 0.3rem 0.9rem;
-            margin-bottom: 0.8rem;
+            font-size: clamp(0.65rem, 1.8vw, 0.82rem);
+            padding: clamp(0.3rem, 0.8vw, 0.4rem) clamp(0.8rem, 2vw, 1.1rem);
+            margin-bottom: clamp(0.7rem, 2vw, 1.1rem);
+            border-radius: min(24px, 3vw);
           }
         }
 
-        @media (max-width: 480px) {
-          .hero-subtitle-pill {
-            font-size: clamp(0.6rem, 1.8vw, 0.7rem);
-            padding: 0.25rem 0.8rem;
-            margin-bottom: 0.6rem;
-          }
-        }
-
-        /* Title */
+        /* Title - scaled proportionally */
         .hero-title {
+          font-family: 'Playfair Display', serif;
           font-size: clamp(2rem, 5vw, 3.6rem);
-          font-weight: 900;
+          font-weight: 800;
           color: white;
           line-height: 1.1;
           margin-bottom: 2rem;
-          letter-spacing: -1px;
+          letter-spacing: -0.02em;
           text-shadow: 0 4px 24px rgba(0,0,0,0.3);
           animation: heroFadeUp 0.7s ease 0.1s both;
         }
 
+        /* Mobile title - scale with viewport */
         @media (max-width: 768px) {
           .hero-title {
-            font-size: clamp(1.5rem, 4vw, 2rem);
-            margin-bottom: 1.2rem;
-            letter-spacing: -0.5px;
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            margin-bottom: clamp(1.2rem, 3vw, 2rem);
+            letter-spacing: -0.01em;
           }
         }
 
         @media (max-width: 480px) {
           .hero-title {
-            font-size: clamp(1.2rem, 3.5vw, 1.5rem);
-            margin-bottom: 1rem;
-            line-height: 1.2;
+            font-size: clamp(1.2rem, 3.8vw, 1.4rem);
+            margin-bottom: clamp(1rem, 2.5vw, 1.2rem);
           }
         }
 
-        @media (max-width: 375px) {
-          .hero-title {
-            font-size: clamp(1.1rem, 3.2vw, 1.3rem);
-            margin-bottom: 0.8rem;
-          }
-        }
-
-        /* CTA Button */
+        /* CTA Button - scaled proportionally */
         .hero-cta-btn {
           display: inline-flex;
           align-items: center;
@@ -373,6 +299,7 @@ const HeroBanner = () => {
           font-family: 'Syne', sans-serif;
           letter-spacing: 0.2px;
           animation: heroFadeUp 0.7s ease 0.2s both;
+          white-space: nowrap;
         }
 
         .hero-cta-btn:hover {
@@ -380,29 +307,20 @@ const HeroBanner = () => {
           box-shadow: 0 14px 36px rgba(13,110,253,0.55);
         }
 
+        /* Mobile button - scale proportionally */
         @media (max-width: 768px) {
           .hero-cta-btn {
-            font-size: clamp(0.85rem, 2.5vw, 1rem);
-            padding: 0.7rem 1.8rem;
-            border-radius: 12px;
-            gap: 0.5rem;
+            font-size: clamp(0.75rem, 2.2vw, 1.05rem);
+            padding: clamp(0.5rem, 1.5vw, 0.85rem) clamp(1.2rem, 4vw, 2.2rem);
+            border-radius: min(14px, 2vw);
+            gap: clamp(0.3rem, 1vw, 0.6rem);
           }
         }
 
         @media (max-width: 480px) {
           .hero-cta-btn {
-            font-size: clamp(0.75rem, 2.2vw, 0.85rem);
-            padding: 0.6rem 1.5rem;
-            border-radius: 10px;
-            gap: 0.4rem;
-          }
-        }
-
-        @media (max-width: 375px) {
-          .hero-cta-btn {
-            font-size: 0.7rem;
-            padding: 0.5rem 1.2rem;
-            border-radius: 8px;
+            font-size: clamp(0.7rem, 2vw, 0.75rem);
+            padding: clamp(0.4rem, 1.2vw, 0.5rem) clamp(1rem, 3vw, 1.2rem);
           }
         }
 
@@ -438,7 +356,7 @@ const HeroBanner = () => {
           }
         }
 
-        /* Dots indicator */
+        /* Dots indicator - scaled proportionally */
         .hero-dots-container {
           position: absolute;
           bottom: 2rem;
@@ -452,13 +370,8 @@ const HeroBanner = () => {
 
         @media (max-width: 768px) {
           .hero-dots-container {
-            bottom: 1.5rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .hero-dots-container {
-            bottom: 1rem;
+            bottom: min(2rem, 4vw);
+            gap: min(0.5rem, 1.5vw);
           }
         }
 
@@ -478,15 +391,18 @@ const HeroBanner = () => {
         }
 
         @media (max-width: 768px) {
-          .hero-dot-btn.active {
-            width: 24px !important;
-          }
           .hero-dot-btn {
-            height: 3px;
+            height: min(4px, 0.8vw);
+          }
+          .hero-dot-btn.active {
+            width: min(32px, 6vw) !important;
+          }
+          .hero-dot-btn:not(.active) {
+            width: min(10px, 2vw) !important;
           }
         }
 
-        /* Slide counter */
+        /* Slide counter - scaled proportionally */
         .hero-counter {
           position: absolute;
           bottom: 2rem;
@@ -501,21 +417,13 @@ const HeroBanner = () => {
 
         @media (max-width: 768px) {
           .hero-counter {
-            bottom: 1.5rem;
-            right: 1.5rem;
-            font-size: 0.7rem;
+            bottom: min(2rem, 4vw);
+            right: min(2rem, 4vw);
+            font-size: clamp(0.6rem, 1.8vw, 0.85rem);
           }
         }
 
-        @media (max-width: 480px) {
-          .hero-counter {
-            bottom: 1rem;
-            right: 1rem;
-            font-size: 0.65rem;
-          }
-        }
-
-        /* Progress bar */
+        /* Progress bar - scaled proportionally */
         .hero-progress-bar {
           position: absolute;
           bottom: 0;
@@ -534,7 +442,7 @@ const HeroBanner = () => {
 
         @media (max-width: 768px) {
           .hero-progress-bar {
-            height: 2px;
+            height: min(3px, 0.6vw);
           }
         }
 
@@ -569,19 +477,11 @@ const HeroBanner = () => {
             key={slide.id}
             className={`hero-slide-layer ${i === current ? "is-active" : "is-inactive"}`}
           >
-            {/* Desktop image (cover) */}
+            {/* Image - same for all devices */}
             <img
               src={slide.image}
               alt={slide.title}
-              className="hero-image-desktop"
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-            
-            {/* Mobile image (contain) */}
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="hero-image-mobile"
+              className="hero-image"
               loading={i === 0 ? "eager" : "lazy"}
             />
             
@@ -589,7 +489,7 @@ const HeroBanner = () => {
           </div>
         ))}
 
-        {/* Content */}
+        {/* Content - exactly the same structure for all devices */}
         <div className="hero-content">
           <div className="hero-text-wrap">
             <div key={`sub-${current}`} className="hero-subtitle-pill">
