@@ -12,7 +12,7 @@ import { generateSlug } from "../utils/helpers";
 
 export const getCategories = async () => {
   const snap = await getDocs(
-    query(collection(db, "categories"), orderBy("createdAt", "asc"))
+    query(collection(db, "categories"))
   );
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 };
@@ -78,7 +78,6 @@ export const getProductsByCategoryPaginated = async (
   let q = query(
     collection(db, "products"),
     where("categoryId", "==", categoryId),
-    orderBy("createdAt", "asc"),
     limit(pageSize)
   );
   if (lastDoc) q = query(q, startAfter(lastDoc));

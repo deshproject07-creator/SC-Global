@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink, useNavigate }  from "react-router-dom";
-import { getCategories }               from "../../firebase/firestore";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { getCategories } from "../../firebase/firestore";
 import { FiMenu, FiX, FiChevronDown, FiGlobe, FiArrowUpRight } from "react-icons/fi";
 import logo from "../../assets/images/company_images/SC-Global.jpeg";
 
 const Navbar = () => {
-  const [scrolled,     setScrolled]     = useState(false);
-  const [sidebarOpen,  setSidebarOpen]  = useState(false);
-  const [categories,   setCategories]   = useState([]);
+  const [scrolled, setScrolled] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef                     = useRef(null);
-  const navigate                        = useNavigate();
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -37,11 +37,10 @@ const Navbar = () => {
   }, [sidebarOpen]);
 
   const navLinks = [
-    { label: "Home",    to: "/"        },
-    { label: "About",   to: "/about"   },
+    { label: "Home", to: "/" },
+    { label: "About", to: "/about" },
     { label: "Gallery", to: "/gallery" },
-    { label: "Blog",    to: "/blog"    },
-    { label: "Contact", to: "/#contact"},
+    { label: "Blog", to: "/blog" },
   ];
 
   return (
@@ -156,56 +155,56 @@ const Navbar = () => {
       <nav
         className="navbar-root"
         style={{
-          position:       "fixed",
-          top:            0,
-          left:           0,
-          right:          0,
-          zIndex:         1000,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
           // ── Transparent at top, white when scrolled ──
-          background:     scrolled
+          background: scrolled
             ? "rgba(255,255,255,0.97)"
             : "transparent",
           backdropFilter: scrolled ? "blur(20px)" : "none",
-          boxShadow:      scrolled
+          boxShadow: scrolled
             ? "0 4px 32px rgba(0,0,0,0.10)"
             : "none",
-          transition:     "all 0.4s ease",
+          transition: "all 0.4s ease",
         }}
       >
         <div
           className="container"
           style={{
-            display:        "flex",
-            alignItems:     "center",
+            display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
-            height:         scrolled ? 80 : 96,
-            transition:     "height 0.35s ease",
+            height: scrolled ? 80 : 96,
+            transition: "height 0.35s ease",
           }}
         >
           {/* ── Brand / Logo ── */}
           <Link
             to="/"
             style={{
-              display:        "flex",
-              alignItems:     "center",
-              gap:            "0.9rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.9rem",
               textDecoration: "none",
-              flexShrink:     0,
+              flexShrink: 0,
             }}
           >
             <img
               src={logo}
               alt="SC Global"
               style={{
-                width:        scrolled ? 58 : 68,
-                height:       scrolled ? 58 : 68,
+                width: scrolled ? 58 : 68,
+                height: scrolled ? 58 : 68,
                 borderRadius: "14px",
-                objectFit:    "cover",
-                transition:   "all 0.35s ease",
-                boxShadow:    scrolled
+                objectFit: "cover",
+                transition: "all 0.35s ease",
+                boxShadow: scrolled
                   ? "0 4px 16px rgba(13,110,253,0.2)"
                   : "0 4px 20px rgba(0,0,0,0.3)",
-                border:       scrolled
+                border: scrolled
                   ? "2.5px solid #e8f0fe"
                   : "2.5px solid rgba(255,255,255,0.4)",
               }}
@@ -213,29 +212,29 @@ const Navbar = () => {
             <div style={{ lineHeight: 1.15 }}>
               <div
                 style={{
-                  fontWeight:    900,
-                  fontSize:      scrolled ? "1.25rem" : "1.45rem",
+                  fontWeight: 900,
+                  fontSize: scrolled ? "1.25rem" : "1.45rem",
                   // ── Blue when scrolled, white when transparent ──
-                  color:         scrolled ? "#0d6efd" : "white",
+                  color: scrolled ? "#0d6efd" : "white",
                   letterSpacing: "0px",
-                  fontFamily:    "Playfair Display, serif",
-                  transition:    "all 0.35s ease",
-                  whiteSpace:    "nowrap",
-                  textShadow:    scrolled ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
+                  fontFamily: "Playfair Display, serif",
+                  transition: "all 0.35s ease",
+                  whiteSpace: "nowrap",
+                  textShadow: scrolled ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
                 }}
               >
                 SC Global Imports & Exports
               </div>
               <div
                 style={{
-                  fontSize:      "0.68rem",
+                  fontSize: "0.68rem",
                   // ── Muted when scrolled, white-ish when transparent ──
-                  color:         scrolled ? "#6c757d" : "rgba(255,255,255,0.75)",
+                  color: scrolled ? "#6c757d" : "rgba(255,255,255,0.75)",
                   letterSpacing: "2px",
-                  fontWeight:    600,
+                  fontWeight: 600,
                   textTransform: "uppercase",
-                  fontFamily:    "DM Sans, sans-serif",
-                  transition:    "color 0.35s ease",
+                  fontFamily: "DM Sans, sans-serif",
+                  transition: "color 0.35s ease",
                 }}
               >
                 International Trade Partner
@@ -260,51 +259,77 @@ const Navbar = () => {
               </NavLink>
             ))}
 
+            {/* Contact — scroll button, not a route */}
+            <button
+              onClick={() => {
+                if (window.location.pathname !== "/") {
+                  navigate("/");
+                  setTimeout(() => {
+                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                  }, 300);
+                } else {
+                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className={`nav-link-item ${scrolled ? "scrolled-link" : "transparent-link"}`}
+              style={{
+                border: "none",
+                background: "transparent",
+                cursor: "pointer",
+                fontFamily: "Playfair Display, serif",
+              }}
+            >
+              Contact
+            </button>
+
+
             {/* ── Products Dropdown ── */}
             <div ref={dropdownRef} style={{ position: "relative" }}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className={`nav-link-item ${scrolled ? "scrolled-link" : "transparent-link"}`}
                 style={{
-                  border:      "none",
-                  background:  dropdownOpen
+                  border: "none",
+                  background: dropdownOpen
                     ? scrolled
                       ? "rgba(13,110,253,0.08)"
                       : "rgba(255,255,255,0.15)"
                     : "transparent",
-                  display:     "flex",
-                  alignItems:  "center",
-                  gap:         "0.3rem",
-                  cursor:      "pointer",
-                  fontFamily:  "Playfair Display, serif",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.3rem",
+                  cursor: "pointer",
+                  fontFamily: "Playfair Display, serif",
                 }}
               >
                 Products
                 <FiChevronDown
                   size={16}
                   style={{
-                    transform:  dropdownOpen ? "rotate(180deg)" : "rotate(0)",
+                    transform: dropdownOpen ? "rotate(180deg)" : "rotate(0)",
                     transition: "transform 0.25s ease",
                   }}
                 />
               </button>
 
+
+
               {/* Dropdown Menu */}
               {dropdownOpen && (
                 <div
                   style={{
-                    position:     "absolute",
-                    top:          "calc(100% + 10px)",
-                    left:         "50%",
-                    transform:    "translateX(-50%)",
-                    background:   "white",
+                    position: "absolute",
+                    top: "calc(100% + 10px)",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    background: "white",
                     borderRadius: "16px",
-                    boxShadow:    "0 16px 48px rgba(0,0,0,0.13)",
-                    border:       "1px solid #e9ecef",
-                    minWidth:     230,
-                    overflow:     "hidden",
-                    animation:    "fadeIn 0.18s ease",
-                    zIndex:       999,
+                    boxShadow: "0 16px 48px rgba(0,0,0,0.13)",
+                    border: "1px solid #e9ecef",
+                    minWidth: 230,
+                    overflow: "hidden",
+                    animation: "fadeIn 0.18s ease",
+                    zIndex: 999,
                   }}
                 >
                   {/* All Products */}
@@ -312,17 +337,17 @@ const Navbar = () => {
                     to="/products"
                     onClick={() => setDropdownOpen(false)}
                     style={{
-                      display:        "flex",
-                      alignItems:     "center",
-                      gap:            "0.5rem",
-                      padding:        "0.85rem 1.1rem",
-                      color:          "#0d6efd",
-                      fontWeight:     700,
-                      fontSize:       "0.92rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      padding: "0.85rem 1.1rem",
+                      color: "#0d6efd",
+                      fontWeight: 700,
+                      fontSize: "0.92rem",
                       textDecoration: "none",
-                      borderBottom:   "1px solid #f1f3f5",
-                      background:     "#f8faff",
-                      fontFamily:     "Playfair Display, serif",
+                      borderBottom: "1px solid #f1f3f5",
+                      background: "#f8faff",
+                      fontFamily: "Playfair Display, serif",
                     }}
                   >
                     <FiGlobe size={15} /> All Products
@@ -348,31 +373,31 @@ const Navbar = () => {
             <button
               onClick={() => navigate("/#contact")}
               style={{
-                marginLeft:    "0.5rem",
-                background:    scrolled
+                marginLeft: "0.5rem",
+                background: scrolled
                   ? "linear-gradient(135deg, #0d6efd, #084298)"
                   : "rgba(255,255,255,0.15)",
-                border:        scrolled
+                border: scrolled
                   ? "none"
                   : "2px solid rgba(255,255,255,0.6)",
                 backdropFilter: scrolled ? "none" : "blur(8px)",
-                borderRadius:  "12px",
-                color:         "white",
-                fontWeight:    700,
-                fontSize:      "1rem",
-                padding:       "0.65rem 1.6rem",
-                cursor:        "pointer",
-                fontFamily:    "Playfair Display, serif",
-                boxShadow:     scrolled
+                borderRadius: "12px",
+                color: "white",
+                fontWeight: 700,
+                fontSize: "1rem",
+                padding: "0.65rem 1.6rem",
+                cursor: "pointer",
+                fontFamily: "Playfair Display, serif",
+                boxShadow: scrolled
                   ? "0 4px 16px rgba(13,110,253,0.35)"
                   : "0 4px 16px rgba(0,0,0,0.2)",
-                transition:    "all 0.3s ease",
+                transition: "all 0.3s ease",
                 letterSpacing: "0.2px",
-                whiteSpace:    "nowrap",
+                whiteSpace: "nowrap",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform  = "translateY(-2px)";
-                e.currentTarget.style.boxShadow  = scrolled
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = scrolled
                   ? "0 8px 24px rgba(13,110,253,0.45)"
                   : "0 8px 24px rgba(0,0,0,0.3)";
               }}
@@ -392,19 +417,19 @@ const Navbar = () => {
             className="d-xl-none"
             onClick={() => setSidebarOpen(true)}
             style={{
-              background:   scrolled
+              background: scrolled
                 ? "rgba(13,110,253,0.08)"
                 : "rgba(255,255,255,0.15)",
-              border:       scrolled
+              border: scrolled
                 ? "none"
                 : "1.5px solid rgba(255,255,255,0.4)",
               borderRadius: "12px",
-              padding:      "0.6rem",
-              cursor:       "pointer",
+              padding: "0.6rem",
+              cursor: "pointer",
               // ── Blue when scrolled, white when transparent ──
-              color:        scrolled ? "#0d6efd" : "white",
-              display:      "flex",
-              transition:   "all 0.3s ease",
+              color: scrolled ? "#0d6efd" : "white",
+              display: "flex",
+              transition: "all 0.3s ease",
             }}
           >
             <FiMenu size={28} />
@@ -416,13 +441,13 @@ const Navbar = () => {
       <div
         onClick={() => setSidebarOpen(false)}
         style={{
-          position:       "fixed",
-          inset:          0,
-          background:     "rgba(0,0,0,0.5)",
-          zIndex:         1100,
-          opacity:        sidebarOpen ? 1 : 0,
-          pointerEvents:  sidebarOpen ? "all" : "none",
-          transition:     "opacity 0.3s ease",
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.5)",
+          zIndex: 1100,
+          opacity: sidebarOpen ? 1 : 0,
+          pointerEvents: sidebarOpen ? "all" : "none",
+          transition: "opacity 0.3s ease",
           backdropFilter: sidebarOpen ? "blur(4px)" : "none",
         }}
       />
@@ -432,29 +457,29 @@ const Navbar = () => {
       ══════════════════════════════════════ */}
       <div
         style={{
-          position:      "fixed",
-          top:           0,
-          left:          0,
-          width:         300,
-          height:        "100vh",
-          background:    "white",
-          zIndex:        1200,
-          transform:     sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-          transition:    "transform 0.32s cubic-bezier(0.4,0,0.2,1)",
-          display:       "flex",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: 300,
+          height: "100vh",
+          background: "white",
+          zIndex: 1200,
+          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.32s cubic-bezier(0.4,0,0.2,1)",
+          display: "flex",
           flexDirection: "column",
-          overflowY:     "auto",
-          boxShadow:     "8px 0 32px rgba(0,0,0,0.12)",
+          overflowY: "auto",
+          boxShadow: "8px 0 32px rgba(0,0,0,0.12)",
         }}
       >
         {/* Sidebar Header */}
         <div
           style={{
-            display:        "flex",
-            alignItems:     "center",
+            display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
-            padding:        "1.5rem 1.25rem",
-            background:     "linear-gradient(135deg, #0d6efd, #084298)",
+            padding: "1.5rem 1.25rem",
+            background: "linear-gradient(135deg, #0d6efd, #084298)",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
@@ -462,19 +487,19 @@ const Navbar = () => {
               src={logo}
               alt="SC Global"
               style={{
-                width:        48,
-                height:       48,
+                width: 48,
+                height: 48,
                 borderRadius: "12px",
-                objectFit:    "cover",
-                border:       "2px solid rgba(255,255,255,0.3)",
+                objectFit: "cover",
+                border: "2px solid rgba(255,255,255,0.3)",
               }}
             />
             <div>
               <div
                 style={{
-                  color:      "white",
+                  color: "white",
                   fontWeight: 800,
-                  fontSize:   "1.05rem",
+                  fontSize: "1.05rem",
                   fontFamily: "Playfair Display, serif",
                   lineHeight: 1.1,
                 }}
@@ -483,11 +508,11 @@ const Navbar = () => {
               </div>
               <div
                 style={{
-                  color:         "rgba(255,255,255,0.7)",
-                  fontSize:      "0.62rem",
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: "0.62rem",
                   letterSpacing: "1.5px",
                   textTransform: "uppercase",
-                  fontFamily:    "DM Sans, sans-serif",
+                  fontFamily: "DM Sans, sans-serif",
                 }}
               >
                 Imports & Exports
@@ -497,16 +522,16 @@ const Navbar = () => {
           <button
             onClick={() => setSidebarOpen(false)}
             style={{
-              background:     "rgba(255,255,255,0.18)",
-              border:         "none",
-              borderRadius:   "50%",
-              width:          38,
-              height:         38,
-              display:        "flex",
-              alignItems:     "center",
+              background: "rgba(255,255,255,0.18)",
+              border: "none",
+              borderRadius: "50%",
+              width: 38,
+              height: 38,
+              display: "flex",
+              alignItems: "center",
               justifyContent: "center",
-              color:          "white",
-              cursor:         "pointer",
+              color: "white",
+              cursor: "pointer",
             }}
           >
             <FiX size={20} />
@@ -531,14 +556,14 @@ const Navbar = () => {
           {/* Products Section Label */}
           <div
             style={{
-              padding:       "0.75rem 1.5rem 0.3rem",
-              fontSize:      "0.65rem",
-              fontWeight:    700,
-              color:         "#adb5bd",
+              padding: "0.75rem 1.5rem 0.3rem",
+              fontSize: "0.65rem",
+              fontWeight: 700,
+              color: "#adb5bd",
               letterSpacing: "2px",
               textTransform: "uppercase",
-              fontFamily:    "DM Sans, sans-serif",
-              marginTop:     "0.5rem",
+              fontFamily: "DM Sans, sans-serif",
+              marginTop: "0.5rem",
             }}
           >
             Products
@@ -552,8 +577,8 @@ const Navbar = () => {
               `sidebar-nav-link${isActive ? " active-link" : ""}`
             }
             style={{
-              color:       "#0d6efd",
-              fontWeight:  700,
+              color: "#0d6efd",
+              fontWeight: 700,
               paddingLeft: "1.75rem",
             }}
           >
@@ -571,8 +596,8 @@ const Navbar = () => {
               }
               style={{
                 paddingLeft: "2rem",
-                fontSize:    "0.95rem",
-                fontWeight:  500,
+                fontSize: "0.95rem",
+                fontWeight: 500,
               }}
             >
               {cat.name}
@@ -583,11 +608,11 @@ const Navbar = () => {
         {/* Sidebar Footer */}
         <div
           style={{
-            padding:    "1rem 1.25rem",
-            borderTop:  "1px solid #f1f3f5",
-            fontSize:   "0.75rem",
-            color:      "#adb5bd",
-            textAlign:  "center",
+            padding: "1rem 1.25rem",
+            borderTop: "1px solid #f1f3f5",
+            fontSize: "0.75rem",
+            color: "#adb5bd",
+            textAlign: "center",
             fontFamily: "DM Sans, sans-serif",
           }}
         >
