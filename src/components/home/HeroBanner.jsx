@@ -39,23 +39,16 @@ const slides = [
 ];
 
 const HeroBanner = () => {
-  const [current,   setCurrent]   = useState(0);
-  const [isPaused,  setIsPaused]  = useState(false);
-  const [loaded,    setLoaded]    = useState({});  // track which images are loaded
-  const autoRef                   = useRef(null);
-  const navigate                  = useNavigate();
-  const total                     = slides.length;
+  const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const autoRef = useRef(null);
+  const navigate = useNavigate();
+  const total = slides.length;
 
-  // ── Preload ALL images immediately on mount ──
-  useEffect(() => {
-    slides.forEach((slide, i) => {
-      const img = new Image();
-      img.src   = slide.image;
-      img.onload = () => {
-        setLoaded((prev) => ({ ...prev, [i]: true }));
-      };
-    });
-  }, []);
+  // Minimum swipe distance
+  const minSwipeDistance = 50;
 
   const goTo = useCallback((index) => {
     setCurrent(index);
@@ -69,7 +62,7 @@ const HeroBanner = () => {
     goTo((current - 1 + total) % total);
   }, [current, total, goTo]);
 
-  // ── Auto advance ───────────────────────────
+  // Auto advance
   useEffect(() => {
     if (!isPaused) {
       autoRef.current = setInterval(next, 4000);
@@ -77,15 +70,42 @@ const HeroBanner = () => {
     return () => clearInterval(autoRef.current);
   }, [next, isPaused]);
 
-  // ── Keyboard ───────────────────────────────
+  // Keyboard navigation
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft")  prev();
+      if (e.key === "ArrowLeft") prev();
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [next, prev]);
+
+  // Touch handlers for mobile swipe
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setIsPaused(true);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      next();
+    } else if (isRightSwipe) {
+      prev();
+    }
+    
+    setIsPaused(false);
+  };
 
   return (
     <>
@@ -93,41 +113,124 @@ const HeroBanner = () => {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap');
 
         .hero-root {
-          position:   relative;
-          height:     90vh;
-          min-height: 560px;
-          overflow:   hidden;
+          position: relative;
+          width: 100%;
+          overflow: hidden;
           background: #0a0f1e;
           font-family: 'Syne', sans-serif;
         }
 
-        /* ── Each slide layer stacked absolutely ── */
+        /* Desktop height - exactly as before */
+        .hero-root {
+          height: 90vh;
+          min-height: 560px;
+        }
+
+        /* Mobile responsive heights */
+        @media (max-width: 768px) {
+          .hero-root {
+            height: 60vh;
+            min-height: 400px;
+            max-height: 500px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .hero-root {
+            height: 55vh;
+            min-height: 380px;
+            max-height: 450px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-root {
+            height: 50vh;
+            min-height: 350px;
+            max-height: 400px;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .hero-root {
+            height: 48vh;
+            min-height: 320px;
+            max-height: 380px;
+          }
+        }
+
+        @media (max-width: 320px) {
+          .hero-root {
+            height: 45vh;
+            min-height: 280px;
+            max-height: 350px;
+          }
+        }
+
+        /* Slide layers */
         .hero-slide-layer {
-          position:    absolute;
-          inset:       0;
-          transition:  opacity 0.9s ease;
+          position: absolute;
+          inset: 0;
+          transition: opacity 0.9s ease;
           will-change: opacity;
         }
 
-        .hero-slide-layer.is-active   { opacity: 1; z-index: 2; }
-        .hero-slide-layer.is-inactive { opacity: 0; z-index: 1; }
-
-        .hero-slide-bg {
-          position:           absolute;
-          inset:              0;
-          background-size:    cover;
-          background-position: center;
-          transform:          scale(1.04);
-          transition:         transform 6s ease;
+        .hero-slide-layer.is-active { 
+          opacity: 1; 
+          z-index: 2; 
+        }
+        
+        .hero-slide-layer.is-inactive { 
+          opacity: 0; 
+          z-index: 1; 
         }
 
-        .hero-slide-layer.is-active .hero-slide-bg {
+        /* Image container */
+        .hero-image-container {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+
+        /* Desktop image - cover */
+        .hero-image-desktop {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transform: scale(1.04);
+          transition: transform 6s ease;
+        }
+
+        .hero-slide-layer.is-active .hero-image-desktop {
           transform: scale(1);
         }
 
+        /* Mobile image - contain with background */
+        .hero-image-mobile {
+          display: none;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          object-position: center;
+          background-color: #0a0f1e;
+        }
+
+        @media (max-width: 768px) {
+          .hero-image-desktop {
+            display: none;
+          }
+          
+          .hero-image-mobile {
+            display: block;
+          }
+        }
+
+        /* Overlay - adjusted for mobile */
         .hero-overlay {
-          position:   absolute;
-          inset:      0;
+          position: absolute;
+          inset: 0;
           background: linear-gradient(
             105deg,
             rgba(0,0,0,0.72) 0%,
@@ -136,119 +239,319 @@ const HeroBanner = () => {
           );
         }
 
-        /* ── Content animations ── */
-        .hero-content {
-          position:      relative;
-          z-index:       10;
-          height:        100%;
-          display:       flex;
-          align-items:   center;
+        @media (max-width: 768px) {
+          .hero-overlay {
+            background: linear-gradient(
+              0deg,
+              rgba(0,0,0,0.8) 0%,
+              rgba(0,0,0,0.4) 50%,
+              rgba(0,0,0,0.2) 100%
+            );
+          }
         }
 
+        /* Content container */
+        .hero-content {
+          position: relative;
+          z-index: 10;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          padding: 0 2rem;
+        }
+
+        @media (max-width: 768px) {
+          .hero-content {
+            align-items: flex-end;
+            padding: 0 1.5rem 3rem 1.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-content {
+            padding: 0 1rem 2rem 1rem;
+          }
+        }
+
+        /* Text wrapper */
         .hero-text-wrap {
           max-width: 680px;
         }
 
+        @media (max-width: 768px) {
+          .hero-text-wrap {
+            max-width: 100%;
+            text-align: left;
+          }
+        }
+
+        /* Subtitle pill */
         .hero-subtitle-pill {
-          display:       inline-flex;
-          align-items:   center;
-          gap:           0.5rem;
-          background:    rgba(13,110,253,0.85);
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(13,110,253,0.85);
           backdrop-filter: blur(8px);
-          color:         white;
-          font-size:     0.82rem;
-          font-weight:   600;
-          padding:       0.4rem 1.1rem;
+          color: white;
+          font-size: 0.82rem;
+          font-weight: 600;
+          padding: 0.4rem 1.1rem;
           border-radius: 24px;
           margin-bottom: 1.1rem;
           letter-spacing: 0.5px;
-          font-family:   'DM Sans', sans-serif;
-          border:        1px solid rgba(255,255,255,0.15);
-          animation:     heroFadeUp 0.7s ease both;
+          font-family: 'DM Sans', sans-serif;
+          border: 1px solid rgba(255,255,255,0.15);
+          animation: heroFadeUp 0.7s ease both;
         }
 
+        @media (max-width: 768px) {
+          .hero-subtitle-pill {
+            font-size: clamp(0.65rem, 2vw, 0.8rem);
+            padding: 0.3rem 0.9rem;
+            margin-bottom: 0.8rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-subtitle-pill {
+            font-size: clamp(0.6rem, 1.8vw, 0.7rem);
+            padding: 0.25rem 0.8rem;
+            margin-bottom: 0.6rem;
+          }
+        }
+
+        /* Title */
         .hero-title {
-          font-size:    clamp(2rem, 5vw, 3.6rem);
-          font-weight:  900;
-          color:        white;
-          line-height:  1.1;
+          font-size: clamp(2rem, 5vw, 3.6rem);
+          font-weight: 900;
+          color: white;
+          line-height: 1.1;
           margin-bottom: 2rem;
           letter-spacing: -1px;
-          text-shadow:  0 4px 24px rgba(0,0,0,0.3);
-          animation:    heroFadeUp 0.7s ease 0.1s both;
+          text-shadow: 0 4px 24px rgba(0,0,0,0.3);
+          animation: heroFadeUp 0.7s ease 0.1s both;
         }
 
+        @media (max-width: 768px) {
+          .hero-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.5px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-title {
+            font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .hero-title {
+            font-size: clamp(1.1rem, 3.2vw, 1.3rem);
+            margin-bottom: 0.8rem;
+          }
+        }
+
+        /* CTA Button */
         .hero-cta-btn {
-          display:       inline-flex;
-          align-items:   center;
-          gap:           0.6rem;
-          background:    linear-gradient(135deg, #0d6efd, #084298);
-          border:        none;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          background: linear-gradient(135deg, #0d6efd, #084298);
+          border: none;
           border-radius: 14px;
-          color:         white;
-          font-weight:   700;
-          font-size:     1.05rem;
-          padding:       0.85rem 2.2rem;
-          cursor:        pointer;
-          box-shadow:    0 8px 28px rgba(13,110,253,0.45);
-          transition:    all 0.28s cubic-bezier(0.34,1.56,0.64,1);
-          font-family:   'Syne', sans-serif;
+          color: white;
+          font-weight: 700;
+          font-size: 1.05rem;
+          padding: 0.85rem 2.2rem;
+          cursor: pointer;
+          box-shadow: 0 8px 28px rgba(13,110,253,0.45);
+          transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+          font-family: 'Syne', sans-serif;
           letter-spacing: 0.2px;
-          animation:     heroFadeUp 0.7s ease 0.2s both;
+          animation: heroFadeUp 0.7s ease 0.2s both;
         }
 
         .hero-cta-btn:hover {
-          transform:  translateY(-3px) scale(1.03);
+          transform: translateY(-3px) scale(1.03);
           box-shadow: 0 14px 36px rgba(13,110,253,0.55);
         }
 
+        @media (max-width: 768px) {
+          .hero-cta-btn {
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            padding: 0.7rem 1.8rem;
+            border-radius: 12px;
+            gap: 0.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-cta-btn {
+            font-size: clamp(0.75rem, 2.2vw, 0.85rem);
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            gap: 0.4rem;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .hero-cta-btn {
+            font-size: 0.7rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+          }
+        }
+
+        /* Navigation Arrows - hidden on mobile */
         .hero-arrow-btn {
-          position:        absolute;
-          top:             50%;
-          transform:       translateY(-50%);
-          z-index:         10;
-          width:           52px;
-          height:          52px;
-          border-radius:   50%;
-          border:          2px solid rgba(255,255,255,0.35);
-          background:      rgba(255,255,255,0.1);
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 10;
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          border: 2px solid rgba(255,255,255,0.35);
+          background: rgba(255,255,255,0.1);
           backdrop-filter: blur(12px);
-          color:           white;
-          display:         flex;
-          align-items:     center;
+          color: white;
+          display: flex;
+          align-items: center;
           justify-content: center;
-          cursor:          pointer;
-          transition:      all 0.25s ease;
+          cursor: pointer;
+          transition: all 0.25s ease;
         }
 
         .hero-arrow-btn:hover {
-          background:   rgba(255,255,255,0.28);
+          background: rgba(255,255,255,0.28);
           border-color: white;
-          transform:    translateY(-50%) scale(1.1);
+          transform: translateY(-50%) scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+          .hero-arrow-btn {
+            display: none;
+          }
+        }
+
+        /* Dots indicator */
+        .hero-dots-container {
+          position: absolute;
+          bottom: 2rem;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+          .hero-dots-container {
+            bottom: 1.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-dots-container {
+            bottom: 1rem;
+          }
         }
 
         .hero-dot-btn {
-          border:        none;
-          cursor:        pointer;
+          border: none;
+          cursor: pointer;
           border-radius: 4px;
-          height:        4px;
-          background:    rgba(255,255,255,0.35);
-          transition:    all 0.35s ease;
-          padding:       0;
+          height: 4px;
+          background: rgba(255,255,255,0.35);
+          transition: all 0.35s ease;
+          padding: 0;
         }
+
         .hero-dot-btn.active {
           background: white;
-          width:      32px !important;
+          width: 32px !important;
+        }
+
+        @media (max-width: 768px) {
+          .hero-dot-btn.active {
+            width: 24px !important;
+          }
+          .hero-dot-btn {
+            height: 3px;
+          }
+        }
+
+        /* Slide counter */
+        .hero-counter {
+          position: absolute;
+          bottom: 2rem;
+          right: 2rem;
+          z-index: 10;
+          color: rgba(255,255,255,0.65);
+          font-size: 0.85rem;
+          font-weight: 700;
+          font-family: 'Syne', sans-serif;
+          letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+          .hero-counter {
+            bottom: 1.5rem;
+            right: 1.5rem;
+            font-size: 0.7rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-counter {
+            bottom: 1rem;
+            right: 1rem;
+            font-size: 0.65rem;
+          }
+        }
+
+        /* Progress bar */
+        .hero-progress-bar {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: rgba(255,255,255,0.12);
+          z-index: 10;
+        }
+
+        .hero-progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #0d6efd, #60a5fa);
+          animation: heroProgressBar 4s linear forwards;
+        }
+
+        @media (max-width: 768px) {
+          .hero-progress-bar {
+            height: 2px;
+          }
         }
 
         @keyframes heroFadeUp {
-          from { opacity: 0; transform: translateY(28px); }
-          to   { opacity: 1; transform: translateY(0);    }
+          from { 
+            opacity: 0; 
+            transform: translateY(28px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
         }
 
         @keyframes heroProgressBar {
-          from { width: 0%;   }
-          to   { width: 100%; }
+          from { width: 0%; }
+          to { width: 100%; }
         }
       `}</style>
 
@@ -256,23 +559,38 @@ const HeroBanner = () => {
         className="hero-root"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
-        {/* ── All slide layers rendered, opacity toggled ── */}
+        {/* Slides */}
         {slides.map((slide, i) => (
           <div
             key={slide.id}
             className={`hero-slide-layer ${i === current ? "is-active" : "is-inactive"}`}
           >
-            <div
-              className="hero-slide-bg"
-              style={{ backgroundImage: `url(${slide.image})` }}
+            {/* Desktop image (cover) */}
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="hero-image-desktop"
+              loading={i === 0 ? "eager" : "lazy"}
             />
+            
+            {/* Mobile image (contain) */}
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="hero-image-mobile"
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+            
             <div className="hero-overlay" />
           </div>
         ))}
 
-        {/* ── Content ── */}
-        <div className="container hero-content">
+        {/* Content */}
+        <div className="hero-content">
           <div className="hero-text-wrap">
             <div key={`sub-${current}`} className="hero-subtitle-pill">
               {slides[current].subtitle}
@@ -290,74 +608,52 @@ const HeroBanner = () => {
           </div>
         </div>
 
-        {/* ── Left Arrow ── */}
-        <button className="hero-arrow-btn" style={{ left: "1.5rem" }} onClick={prev}>
+        {/* Navigation Arrows */}
+        <button 
+          className="hero-arrow-btn" 
+          style={{ left: "1.5rem" }} 
+          onClick={prev}
+          aria-label="Previous slide"
+        >
           <FiChevronLeft size={24} />
         </button>
 
-        {/* ── Right Arrow ── */}
-        <button className="hero-arrow-btn" style={{ right: "1.5rem" }} onClick={next}>
+        <button 
+          className="hero-arrow-btn" 
+          style={{ right: "1.5rem" }} 
+          onClick={next}
+          aria-label="Next slide"
+        >
           <FiChevronRight size={24} />
         </button>
 
-        {/* ── Dots + Counter ── */}
-        <div
-          style={{
-            position:       "absolute",
-            bottom:         "2rem",
-            left:           "50%",
-            transform:      "translateX(-50%)",
-            zIndex:         10,
-            display:        "flex",
-            alignItems:     "center",
-            gap:            "0.5rem",
-          }}
-        >
+        {/* Dots Indicator */}
+        <div className="hero-dots-container">
           {slides.map((_, i) => (
             <button
               key={i}
               className={`hero-dot-btn ${i === current ? "active" : ""}`}
-              style={{ width: i === current ? 32 : 10, height: 4 }}
+              style={{ width: i === current ? 32 : 10 }}
               onClick={() => goTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
             />
           ))}
         </div>
 
-        {/* ── Slide counter ── */}
-        <div
-          style={{
-            position:   "absolute",
-            bottom:     "2rem",
-            right:      "2rem",
-            zIndex:     10,
-            color:      "rgba(255,255,255,0.65)",
-            fontSize:   "0.85rem",
-            fontWeight: 700,
-            fontFamily: "Syne, sans-serif",
-            letterSpacing: "1px",
-          }}
-        >
-          {String(current + 1).padStart(2, "0")} <span style={{ opacity: 0.4 }}>/ {String(total).padStart(2, "0")}</span>
+        {/* Slide Counter */}
+        <div className="hero-counter">
+          {String(current + 1).padStart(2, "0")} 
+          <span style={{ opacity: 0.4 }}> / {String(total).padStart(2, "0")}</span>
         </div>
 
-        {/* ── Progress bar ── */}
-        <div
-          style={{
-            position:   "absolute",
-            bottom:     0, left: 0, right: 0,
-            height:     3,
-            background: "rgba(255,255,255,0.12)",
-            zIndex:     10,
-          }}
-        >
-          <div
-            key={`pb-${current}-${isPaused}`}
-            style={{
-              height:    "100%",
-              background: "linear-gradient(90deg, #0d6efd, #60a5fa)",
-              animation:  isPaused ? "none" : "heroProgressBar 4s linear forwards",
-            }}
-          />
+        {/* Progress Bar */}
+        <div className="hero-progress-bar">
+          {!isPaused && (
+            <div
+              key={`pb-${current}`}
+              className="hero-progress-fill"
+            />
+          )}
         </div>
       </section>
     </>
