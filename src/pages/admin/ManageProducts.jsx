@@ -19,7 +19,9 @@ const ManageProducts = () => {
   const [products, setProducts]         = useState([]);
   const [categories, setCategories]     = useState([]);
   const [loading, setLoading]           = useState(true);
-  const [viewMode, setViewMode]         = useState("table");
+  
+  // ── Default to card view on mobile ──
+  const [viewMode, setViewMode]         = useState(window.innerWidth < 768 ? "card" : "table");
   const [filterCat, setFilterCat]       = useState("all");
   const [showModal, setShowModal]       = useState(false);
   const [formData, setFormData]         = useState(emptyForm);
@@ -27,6 +29,9 @@ const ManageProducts = () => {
   const [saving, setSaving]             = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting]         = useState(false);
+  
+  // ── State for tracking mobile ──
+  const [isMobile, setIsMobile]         = useState(window.innerWidth < 768);
 
   // ── Image Upload States ────────────────────
   const [imageFile, setImageFile]           = useState(null);
@@ -34,6 +39,23 @@ const ManageProducts = () => {
   const [uploading, setUploading]           = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef                        = useRef(null);
+
+  // ── Track screen size ──────────────────────
+  useEffect(() => {
+    const onResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) setViewMode("card");
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Lock body scroll when modal open
+  useEffect(() => {
+    document.body.style.overflow = showModal ? "hidden" : "unset";
+    return () => { document.body.style.overflow = "unset"; };
+  }, [showModal]);
 
   // ── Fetch All ──────────────────────────────
   const fetchAll = async () => {
@@ -225,21 +247,29 @@ const ManageProducts = () => {
                   ))}
                 </select>
               </div>
-              <button
-                className={`view-toggle-btn ${viewMode === "table" ? "active" : ""}`}
-                onClick={() => setViewMode("table")} title="Table View"
-              >
-                <FiList size={16} />
-              </button>
-              <button
-                className={`view-toggle-btn ${viewMode === "card" ? "active" : ""}`}
-                onClick={() => setViewMode("card")} title="Card View"
-              >
-                <FiGrid size={16} />
-              </button>
+              
+               {/* Hide view toggle on mobile — always card */}
+              {!isMobile && (
+                  <>
+                    <button
+                        className={`view-toggle-btn ${viewMode === "table" ? "active" : ""}`}
+                        onClick={() => setViewMode("table")} title="Table View"
+                    >
+                        <FiList size={16} />
+                    </button>
+                    <button
+                        className={`view-toggle-btn ${viewMode === "card" ? "active" : ""}`}
+                        onClick={() => setViewMode("card")} title="Card View"
+                    >
+                        <FiGrid size={16} />
+                    </button>
+                  </>
+              )}
+
               <button
                 className="btn btn-primary d-flex align-items-center gap-2"
                 onClick={openAddModal}
+                 style={{ minHeight: 44 }}
               >
                 <FiPlus /> Add Product
               </button>
@@ -255,10 +285,13 @@ const ManageProducts = () => {
             <div className="text-center py-5 text-muted">
               <FiGrid size={48} className="mb-3 opacity-25" />
               <p>No products found. Add your first product!</p>
+               <button className="btn btn-primary mt-2" onClick={openAddModal}>
+                <FiPlus className="me-1" /> Add Product
+              </button>
             </div>
-          ) : viewMode === "table" ? (
+          ) : viewMode === "table" && !isMobile ? (
 
-            /* ── TABLE VIEW ── */
+            /* ── TABLE VIEW (desktop only) ── */
             <div className="admin-table">
               <table className="table mb-0">
                 <thead>
@@ -324,18 +357,29 @@ const ManageProducts = () => {
 
           ) : (
 
-            /* ── CARD VIEW ── */
+            /* ── CARD VIEW (default on mobile, optional on desktop) ── */
             <div className="row g-3 stagger-children">
               {filtered.map((prod) => (
                 <div key={prod.id} className="col-12 col-sm-6 col-lg-4 animate-slide-up">
-                  <div className="admin-card h-100">
+                  <div 
+                      className="admin-card h-100"
+                      style={{
+                        background:    "white",
+                        borderRadius:  14,
+                        overflow:      "hidden",
+                        boxShadow:     "0 2px 12px rgba(0,0,0,0.07)",
+                        border:        "1px solid #f1f3f5",
+                        display:       "flex",
+                        flexDirection: "column",
+                      }}
+                  >
                     <img
                       src={prod.imageUrl || "https://placehold.co/400x180?text=No+Image"}
                       alt={prod.name}
-                      style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: "12px 12px 0 0" }}
+                      style={{ width: "100%", height: 160, objectFit: "cover"}}
                       onError={(e) => { e.target.src = "https://placehold.co/400x180?text=No+Image"; }}
                     />
-                    <div className="p-3">
+                    <div style={{ padding: "1rem", flex: 1 }}>
                       <span
                         className="badge rounded-pill mb-2"
                         style={{ background: "#e8f0fe", color: "#0d6efd", fontWeight: 500 }}
@@ -351,21 +395,56 @@ const ManageProducts = () => {
                       }}>
                         {prod.description || "No description provided."}
                       </p>
-                      <div className="d-flex gap-2">
-                        <button
-                          className="btn btn-sm btn-outline-primary flex-fill"
-                          onClick={() => openEditModal(prod)}
-                        >
-                          <FiEdit2 size={13} className="me-1" /> Edit
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger flex-fill"
-                          onClick={() => setDeleteTarget({ id: prod.id, name: prod.name })}
-                        >
-                          <FiTrash2 size={13} className="me-1" /> Delete
-                        </button>
-                      </div>
                     </div>
+
+                    {/* Action buttons — full width on mobile for easy tapping */}
+                    <div style={{
+                      display:       "flex",
+                      borderTop:     "1px solid #f1f3f5",
+                    }}>
+                      <button
+                        onClick={() => openEditModal(prod)}
+                        style={{
+                          flex:           1,
+                          padding:        "0.75rem",
+                          border:         "none",
+                          background:     "transparent",
+                          color:          "#0d6efd",
+                          fontWeight:     600,
+                          fontSize:       "0.85rem",
+                          cursor:         "pointer",
+                          display:        "flex",
+                          alignItems:     "center",
+                          justifyContent: "center",
+                          gap:            "0.4rem",
+                          minHeight:      48,
+                        }}
+                      >
+                        <FiEdit2 size={15} /> Edit
+                      </button>
+                      <div style={{ width: 1, background: "#f1f3f5" }} />
+                      <button
+                         onClick={() => setDeleteTarget({ id: prod.id, name: prod.name })}
+                        style={{
+                          flex:           1,
+                          padding:        "0.75rem",
+                          border:         "none",
+                          background:     "transparent",
+                          color:          "#dc3545",
+                          fontWeight:     600,
+                          fontSize:       "0.85rem",
+                          cursor:         "pointer",
+                          display:        "flex",
+                          alignItems:     "center",
+                          justifyContent: "center",
+                          gap:            "0.4rem",
+                          minHeight:      48,
+                        }}
+                      >
+                        <FiTrash2 size={15} /> Delete
+                      </button>
+                    </div>
+
                   </div>
                 </div>
               ))}
@@ -375,7 +454,7 @@ const ManageProducts = () => {
       </div>
 
       {/* ══════════════════════════════════════════
-          ADD / EDIT MODAL
+          ADD / EDIT MODAL — Full screen on mobile
       ══════════════════════════════════════════ */}
       {showModal && (
         <div
@@ -383,13 +462,33 @@ const ManageProducts = () => {
           style={{ background: "rgba(0,0,0,0.5)" }}
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
+          <div 
+             className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+             style={isMobile ? {
+              margin:   0,
+              maxWidth: "100%",
+              height:   "100%",
+            } : {}}
+          >
+            <div 
+               className="modal-content border-0 shadow"
+               style={isMobile ? {
+                 borderRadius: 0,
+                 height:       "100%",
+                 maxHeight:    "100%",
+               } : { borderRadius: 16 }}
+            >
+              {/* Modal Header */}
+              <div className="modal-header border-0 pb-0">
                 <h5 className="modal-title fw-bold">
                   {editingId ? "Edit Product" : "Add New Product"}
                 </h5>
-                <button className="btn-close" onClick={closeModal} />
+                <button 
+                   type="button"
+                   className="btn-close" 
+                   onClick={closeModal} 
+                   style={{ minWidth: 44, minHeight: 44 }}
+                />
               </div>
               <form onSubmit={handleSave}>
                 <div className="modal-body p-4">
@@ -403,6 +502,7 @@ const ManageProducts = () => {
                       className="form-select"
                       value={formData.categoryId}
                       onChange={handleCategorySelect}
+                       style={{ minHeight: 48 }}
                     >
                       <option value="">— Select Category —</option>
                       {categories.map((cat) => (
@@ -422,6 +522,7 @@ const ManageProducts = () => {
                       placeholder="e.g. Basmati Rice"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                       style={{ minHeight: 48 }}
                     />
                   </div>
 
@@ -456,12 +557,12 @@ const ManageProducts = () => {
                             position: "absolute", top: 8, right: 8,
                             background: "rgba(0,0,0,0.55)",
                             border: "none", borderRadius: "50%",
-                            width: 30, height: 30,
+                            width: 36, height: 36,
                             display: "flex", alignItems: "center", justifyContent: "center",
                             color: "white", cursor: "pointer",
                           }}
                         >
-                          <FiX size={14} />
+                          <FiX size={16} />
                         </button>
                         <button
                           type="button"
@@ -470,13 +571,13 @@ const ManageProducts = () => {
                             position: "absolute", bottom: 8, right: 8,
                             background: "rgba(13,110,253,0.85)",
                             border: "none", borderRadius: 8,
-                            padding: "4px 10px",
+                            padding: "6px 12px",
                             color: "white", cursor: "pointer",
-                            fontSize: "0.75rem",
+                            fontSize: "0.78rem",
                             display: "flex", alignItems: "center", gap: 4,
                           }}
                         >
-                          <FiUpload size={12} /> Change
+                          <FiUpload size={13} /> Change
                         </button>
                       </div>
                     ) : (
@@ -485,7 +586,8 @@ const ManageProducts = () => {
                         style={{
                           border: "2px dashed #dee2e6",
                           borderRadius: 12,
-                          padding: "2rem",
+                           // taller dropzone on mobile for easier tap
+                           padding: isMobile ? "2.5rem 1rem" : "2rem",
                           textAlign: "center",
                           cursor: "pointer",
                           background: "#f8f9ff",
@@ -500,9 +602,9 @@ const ManageProducts = () => {
                           e.currentTarget.style.background = "#f8f9ff";
                         }}
                       >
-                        <FiImage size={32} color="#0d6efd" className="mb-2" />
+                        <FiImage size={36} color="#0d6efd" className="mb-2" />
                         <p className="mb-1 fw-500" style={{ fontSize: "0.9rem" }}>
-                          Click to upload image
+                           {isMobile ? "Tap to upload image" : "Click to upload image"}
                         </p>
                         <p className="mb-0 text-muted" style={{ fontSize: "0.75rem" }}>
                           JPG, PNG, WEBP — Max 5MB
@@ -544,11 +646,22 @@ const ManageProducts = () => {
                   </div>
 
                 </div>
+                 {/* Modal Footer */}
                 <div className="modal-footer border-0 pt-0">
-                  <button type="button" className="btn btn-light" onClick={closeModal}>
+                  <button 
+                     type="button" 
+                     className="btn btn-light" 
+                     onClick={closeModal}
+                     style={{ minHeight: 48, flex: isMobile ? 1 : "unset" }}
+                  >
                     <FiX className="me-1" /> Cancel
                   </button>
-                  <button type="submit" className="btn btn-primary" disabled={saving || uploading}>
+                  <button 
+                     type="submit" 
+                     className="btn btn-primary" 
+                     disabled={saving || uploading}
+                     style={{ minHeight: 48, flex: isMobile ? 1 : "unset" }}
+                  >
                     {saving || uploading ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" />
@@ -591,6 +704,7 @@ const ManageProducts = () => {
                     className="btn btn-light px-4"
                     onClick={() => setDeleteTarget(null)}
                     disabled={deleting}
+                     style={{ minHeight: 48 }}
                   >
                     Cancel
                   </button>
@@ -598,6 +712,7 @@ const ManageProducts = () => {
                     className="btn btn-danger px-4"
                     onClick={handleDeleteConfirm}
                     disabled={deleting}
+                     style={{ minHeight: 48 }}
                   >
                     {deleting ? (
                       <><span className="spinner-border spinner-border-sm me-2" />Deleting...</>

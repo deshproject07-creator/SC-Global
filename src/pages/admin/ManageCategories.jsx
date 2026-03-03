@@ -15,22 +15,33 @@ const emptyForm = { name: "", description: "", imageUrl: "" };
 const ManageCategories = () => {
   const [categories, setCategories]     = useState([]);
   const [loading, setLoading]           = useState(true);
-  const [viewMode, setViewMode]         = useState("table");
+  // ── Default to card view on mobile ──
+  const [viewMode, setViewMode]         = useState(window.innerWidth < 768 ? "card" : "table");
   const [showModal, setShowModal]       = useState(false);
   const [formData, setFormData]         = useState(emptyForm);
   const [editingId, setEditingId]       = useState(null);
   const [saving, setSaving]             = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting]         = useState(false);
+  const [isMobile, setIsMobile]         = useState(window.innerWidth < 768);
 
-  // ── Image Upload States ────────────────────
-  const [imageFile, setImageFile]       = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
-  const [uploading, setUploading]       = useState(false);
+  const [imageFile, setImageFile]           = useState(null);
+  const [imagePreview, setImagePreview]     = useState("");
+  const [uploading, setUploading]           = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const fileInputRef                    = useRef(null);
+  const fileInputRef                        = useRef(null);
 
-  // ── Fetch ──────────────────────────────────
+  // ── Track screen size ──────────────────────
+  useEffect(() => {
+    const onResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) setViewMode("card");
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const fetchCategories = async () => {
     setLoading(true);
     try {
@@ -45,7 +56,6 @@ const ManageCategories = () => {
 
   useEffect(() => { fetchCategories(); }, []);
 
-  // ── Open Add Modal ─────────────────────────
   const openAddModal = () => {
     setFormData(emptyForm);
     setEditingId(null);
@@ -54,7 +64,6 @@ const ManageCategories = () => {
     setShowModal(true);
   };
 
-  // ── Open Edit Modal ────────────────────────
   const openEditModal = (cat) => {
     setFormData({ name: cat.name, description: cat.description, imageUrl: cat.imageUrl });
     setEditingId(cat.id);
@@ -63,7 +72,6 @@ const ManageCategories = () => {
     setShowModal(true);
   };
 
-  // ── Close Modal ────────────────────────────
   const closeModal = () => {
     setShowModal(false);
     setFormData(emptyForm);
@@ -73,66 +81,48 @@ const ManageCategories = () => {
     setUploadProgress(0);
   };
 
-  // ── Handle Image File Pick ─────────────────
+  // Lock body scroll when modal open
+  useEffect(() => {
+    document.body.style.overflow = showModal ? "hidden" : "unset";
+    return () => { document.body.style.overflow = "unset"; };
+  }, [showModal]);
+
   const handleImagePick = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Validate type
     const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!allowed.includes(file.type)) {
-      toast.error("Only JPG, PNG, and WEBP images are allowed.");
-      return;
-    }
-
-    // Validate size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be less than 5MB.");
-      return;
-    }
-
+    if (!allowed.includes(file.type)) { toast.error("Only JPG, PNG, and WEBP images are allowed."); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be less than 5MB."); return; }
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
 
-  // ── Remove Selected Image ──────────────────
   const removeImage = () => {
     setImageFile(null);
     setImagePreview(editingId ? formData.imageUrl : "");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // ── Save (Add / Edit) ──────────────────────
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
-      toast.error("Category name is required.");
-      return;
-    }
+    if (!formData.name.trim()) { toast.error("Category name is required."); return; }
     setSaving(true);
     try {
       let imageUrl = formData.imageUrl;
-
-      // Upload new image if picked
       if (imageFile) {
         setUploading(true);
-
-        // Simulate progress (Cloudinary doesn't return progress natively)
         const progressInterval = setInterval(() => {
           setUploadProgress((prev) => {
             if (prev >= 85) { clearInterval(progressInterval); return prev; }
             return prev + 10;
           });
         }, 200);
-
         imageUrl = await uploadToCloudinary(imageFile);
         clearInterval(progressInterval);
         setUploadProgress(100);
         setUploading(false);
       }
-
       const payload = { ...formData, imageUrl };
-
       if (editingId) {
         await updateCategory(editingId, payload);
         toast.success("Category updated successfully! ✅");
@@ -151,7 +141,6 @@ const ManageCategories = () => {
     }
   };
 
-  // ── Delete Confirm ─────────────────────────
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -181,20 +170,29 @@ const ManageCategories = () => {
               <h4 className="fw-bold mb-0">Categories</h4>
               <p className="text-muted small mb-0">{categories.length} total categories</p>
             </div>
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              {/* Hide view toggle on mobile — always card */}
+              {!isMobile && (
+                <>
+                  <button
+                    className={`view-toggle-btn ${viewMode === "table" ? "active" : ""}`}
+                    onClick={() => setViewMode("table")} title="Table View"
+                  >
+                    <FiList size={16} />
+                  </button>
+                  <button
+                    className={`view-toggle-btn ${viewMode === "card" ? "active" : ""}`}
+                    onClick={() => setViewMode("card")} title="Card View"
+                  >
+                    <FiGrid size={16} />
+                  </button>
+                </>
+              )}
               <button
-                className={`view-toggle-btn ${viewMode === "table" ? "active" : ""}`}
-                onClick={() => setViewMode("table")} title="Table View"
+                className="btn btn-primary d-flex align-items-center gap-2"
+                onClick={openAddModal}
+                style={{ minHeight: 44 }}
               >
-                <FiList size={16} />
-              </button>
-              <button
-                className={`view-toggle-btn ${viewMode === "card" ? "active" : ""}`}
-                onClick={() => setViewMode("card")} title="Card View"
-              >
-                <FiGrid size={16} />
-              </button>
-              <button className="btn btn-primary d-flex align-items-center gap-2" onClick={openAddModal}>
                 <FiPlus /> Add Category
               </button>
             </div>
@@ -205,61 +203,62 @@ const ManageCategories = () => {
             <div className="text-center py-5">
               <div className="spinner-border text-primary" />
             </div>
+
           ) : categories.length === 0 ? (
             <div className="text-center py-5 text-muted">
               <FiGrid size={48} className="mb-3 opacity-25" />
               <p>No categories yet. Add your first one!</p>
+              <button className="btn btn-primary mt-2" onClick={openAddModal}>
+                <FiPlus className="me-1" /> Add Category
+              </button>
             </div>
-          ) : viewMode === "table" ? (
 
-            /* ── TABLE VIEW ── */
-            <div className="admin-table">
-              <table className="table mb-0">
+          ) : viewMode === "table" && !isMobile ? (
+            /* ── TABLE VIEW (desktop only) ── */
+            <div className="table-responsive">
+              <table className="table admin-table">
                 <thead>
                   <tr>
-                    <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <th className="text-end">Actions</th>
+                    <th>Slug</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {categories.map((cat, i) => (
-                    <tr key={cat.id} className="animate-fade-in">
-                      <td className="text-muted small">{i + 1}</td>
+                  {categories.map((cat) => (
+                    <tr key={cat.id}>
                       <td>
                         <img
-                          src={cat.imageUrl || "https://placehold.co/52x52?text=No+Img"}
+                          src={cat.imageUrl || "https://placehold.co/60x60?text=Cat"}
                           alt={cat.name}
-                          className="table-img"
-                          onError={(e) => { e.target.src = "https://placehold.co/52x52?text=No+Img"; }}
+                          style={{ width: 52, height: 52, objectFit: "cover", borderRadius: 8 }}
+                          onError={(e) => { e.target.src = "https://placehold.co/60x60?text=Cat"; }}
                         />
                       </td>
                       <td className="fw-500">{cat.name}</td>
-                      <td className="text-muted small" style={{ maxWidth: 300 }}>
-                        <span style={{
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                        }}>
-                          {cat.description || "—"}
-                        </span>
+                      <td className="text-muted small" style={{ maxWidth: 220 }}>
+                        {cat.description
+                          ? cat.description.length > 80
+                            ? cat.description.slice(0, 80) + "..."
+                            : cat.description
+                          : <span className="text-muted fst-italic">No description</span>}
                       </td>
-                      <td className="text-end">
-                        <button
-                          className="btn btn-sm btn-outline-primary me-2"
-                          onClick={() => openEditModal(cat)}
-                        >
-                          <FiEdit2 size={14} />
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => setDeleteTarget({ id: cat.id, name: cat.name })}
-                        >
-                          <FiTrash2 size={14} />
-                        </button>
+                      <td>
+                        <code style={{ fontSize: "0.8rem", background: "#f1f3f5", padding: "2px 6px", borderRadius: 4 }}>
+                          {cat.slug}
+                        </code>
+                      </td>
+                      <td>
+                        <div className="d-flex gap-2">
+                          <button className="btn btn-sm btn-outline-primary" onClick={() => openEditModal(cat)}>
+                            <FiEdit2 size={14} />
+                          </button>
+                          <button className="btn btn-sm btn-outline-danger" onClick={() => setDeleteTarget(cat)}>
+                            <FiTrash2 size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -268,42 +267,85 @@ const ManageCategories = () => {
             </div>
 
           ) : (
-
-            /* ── CARD VIEW ── */
-            <div className="row g-3 stagger-children">
+            /* ── CARD VIEW (default on mobile, optional on desktop) ── */
+            <div className="row g-3">
               {categories.map((cat) => (
-                <div key={cat.id} className="col-12 col-sm-6 col-lg-4 animate-slide-up">
-                  <div className="admin-card h-100">
+                <div key={cat.id} className="col-12 col-sm-6 col-lg-4">
+                  <div
+                    style={{
+                      background:    "white",
+                      borderRadius:  14,
+                      overflow:      "hidden",
+                      boxShadow:     "0 2px 12px rgba(0,0,0,0.07)",
+                      border:        "1px solid #f1f3f5",
+                      display:       "flex",
+                      flexDirection: "column",
+                    }}
+                  >
                     <img
-                      src={cat.imageUrl || "https://placehold.co/400x180?text=No+Image"}
+                      src={cat.imageUrl || "https://placehold.co/400x180?text=Category"}
                       alt={cat.name}
-                      style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: "12px 12px 0 0" }}
-                      onError={(e) => { e.target.src = "https://placehold.co/400x180?text=No+Image"; }}
+                      style={{ width: "100%", height: 160, objectFit: "cover" }}
+                      onError={(e) => { e.target.src = "https://placehold.co/400x180?text=Category"; }}
                     />
-                    <div className="p-3">
+                    <div style={{ padding: "1rem", flex: 1 }}>
                       <h6 className="fw-bold mb-1">{cat.name}</h6>
-                      <p className="text-muted small mb-3" style={{
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
+                      <p className="text-muted small mb-2" style={{
+                        display: "-webkit-box", WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical", overflow: "hidden",
                       }}>
-                        {cat.description || "No description provided."}
+                        {cat.description || "No description"}
                       </p>
-                      <div className="d-flex gap-2">
-                        <button
-                          className="btn btn-sm btn-outline-primary flex-fill"
-                          onClick={() => openEditModal(cat)}
-                        >
-                          <FiEdit2 size={13} className="me-1" /> Edit
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger flex-fill"
-                          onClick={() => setDeleteTarget({ id: cat.id, name: cat.name })}
-                        >
-                          <FiTrash2 size={13} className="me-1" /> Delete
-                        </button>
-                      </div>
+                      <code style={{ fontSize: "0.75rem", background: "#f1f3f5", padding: "2px 6px", borderRadius: 4 }}>
+                        {cat.slug}
+                      </code>
+                    </div>
+                    {/* Action buttons — full width on mobile for easy tapping */}
+                    <div style={{
+                      display:       "flex",
+                      borderTop:     "1px solid #f1f3f5",
+                    }}>
+                      <button
+                        onClick={() => openEditModal(cat)}
+                        style={{
+                          flex:           1,
+                          padding:        "0.75rem",
+                          border:         "none",
+                          background:     "transparent",
+                          color:          "#0d6efd",
+                          fontWeight:     600,
+                          fontSize:       "0.85rem",
+                          cursor:         "pointer",
+                          display:        "flex",
+                          alignItems:     "center",
+                          justifyContent: "center",
+                          gap:            "0.4rem",
+                          minHeight:      48,
+                        }}
+                      >
+                        <FiEdit2 size={15} /> Edit
+                      </button>
+                      <div style={{ width: 1, background: "#f1f3f5" }} />
+                      <button
+                        onClick={() => setDeleteTarget(cat)}
+                        style={{
+                          flex:           1,
+                          padding:        "0.75rem",
+                          border:         "none",
+                          background:     "transparent",
+                          color:          "#dc3545",
+                          fontWeight:     600,
+                          fontSize:       "0.85rem",
+                          cursor:         "pointer",
+                          display:        "flex",
+                          alignItems:     "center",
+                          justifyContent: "center",
+                          gap:            "0.4rem",
+                          minHeight:      48,
+                        }}
+                      >
+                        <FiTrash2 size={15} /> Delete
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -314,36 +356,56 @@ const ManageCategories = () => {
       </div>
 
       {/* ══════════════════════════════════════════
-          ADD / EDIT MODAL
+          ADD / EDIT MODAL — Full screen on mobile
       ══════════════════════════════════════════ */}
       {showModal && (
         <div
-          className="modal show d-block admin-modal"
+          className="modal show d-block"
           style={{ background: "rgba(0,0,0,0.5)" }}
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
+          <div
+            className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+            style={isMobile ? {
+              margin:   0,
+              maxWidth: "100%",
+              height:   "100%",
+            } : {}}
+          >
+            <div
+              className="modal-content border-0 shadow"
+              style={isMobile ? {
+                borderRadius: 0,
+                height:       "100%",
+                maxHeight:    "100%",
+              } : { borderRadius: 16 }}
+            >
+              {/* Modal Header */}
+              <div className="modal-header border-0 pb-0">
                 <h5 className="modal-title fw-bold">
-                  {editingId ? "Edit Category" : "Add New Category"}
+                  {editingId ? "Edit Category" : "Add Category"}
                 </h5>
-                <button className="btn-close" onClick={closeModal} />
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                  style={{ minWidth: 44, minHeight: 44 }}
+                />
               </div>
+
               <form onSubmit={handleSave}>
-                <div className="modal-body p-4">
+                <div className="modal-body">
 
                   {/* Name */}
                   <div className="mb-3">
-                    <label className="form-label fw-500">
-                      Category Name <span className="text-danger">*</span>
-                    </label>
+                    <label className="form-label fw-500">Category Name *</label>
                     <input
                       type="text"
                       className="form-control"
                       placeholder="e.g. Agricultural Products"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      style={{ minHeight: 48 }}
                     />
                   </div>
 
@@ -359,11 +421,10 @@ const ManageCategories = () => {
                     />
                   </div>
 
-                  {/* ── Image Upload ── */}
+                  {/* Image Upload */}
                   <div className="mb-3">
                     <label className="form-label fw-500">Category Image</label>
 
-                    {/* Preview */}
                     {imagePreview ? (
                       <div className="position-relative mb-2">
                         <img
@@ -372,63 +433,56 @@ const ManageCategories = () => {
                           className="rounded"
                           style={{ width: "100%", height: 160, objectFit: "cover" }}
                         />
-                        {/* Remove Button */}
                         <button
                           type="button"
                           onClick={removeImage}
                           style={{
                             position: "absolute", top: 8, right: 8,
-                            background: "rgba(0,0,0,0.55)",
-                            border: "none", borderRadius: "50%",
-                            width: 30, height: 30,
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            color: "white", cursor: "pointer",
+                            background: "rgba(0,0,0,0.55)", border: "none",
+                            borderRadius: "50%", width: 36, height: 36,
+                            display: "flex", alignItems: "center",
+                            justifyContent: "center", color: "white", cursor: "pointer",
                           }}
                         >
-                          <FiX size={14} />
+                          <FiX size={16} />
                         </button>
-                        {/* Change Image */}
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
                           style={{
                             position: "absolute", bottom: 8, right: 8,
-                            background: "rgba(13,110,253,0.85)",
-                            border: "none", borderRadius: 8,
-                            padding: "4px 10px",
+                            background: "rgba(13,110,253,0.85)", border: "none",
+                            borderRadius: 8, padding: "6px 12px",
                             color: "white", cursor: "pointer",
-                            fontSize: "0.75rem",
+                            fontSize: "0.78rem",
                             display: "flex", alignItems: "center", gap: 4,
                           }}
                         >
-                          <FiUpload size={12} /> Change
+                          <FiUpload size={13} /> Change
                         </button>
                       </div>
                     ) : (
-                      /* Upload Dropzone */
                       <div
                         onClick={() => fileInputRef.current?.click()}
                         style={{
-                          border: "2px dashed #dee2e6",
-                          borderRadius: 12,
-                          padding: "2rem",
-                          textAlign: "center",
-                          cursor: "pointer",
-                          background: "#f8f9ff",
-                          transition: "all 0.2s ease",
+                          border: "2px dashed #dee2e6", borderRadius: 12,
+                          // taller dropzone on mobile for easier tap
+                          padding: isMobile ? "2.5rem 1rem" : "2rem",
+                          textAlign: "center", cursor: "pointer",
+                          background: "#f8f9ff", transition: "all 0.2s ease",
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.borderColor = "#0d6efd";
-                          e.currentTarget.style.background = "#e8f0fe";
+                          e.currentTarget.style.background  = "#e8f0fe";
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.borderColor = "#dee2e6";
-                          e.currentTarget.style.background = "#f8f9ff";
+                          e.currentTarget.style.background  = "#f8f9ff";
                         }}
                       >
-                        <FiImage size={32} color="#0d6efd" className="mb-2" />
+                        <FiImage size={36} color="#0d6efd" className="mb-2" />
                         <p className="mb-1 fw-500" style={{ fontSize: "0.9rem" }}>
-                          Click to upload image
+                          {isMobile ? "Tap to upload image" : "Click to upload image"}
                         </p>
                         <p className="mb-0 text-muted" style={{ fontSize: "0.75rem" }}>
                           JPG, PNG, WEBP — Max 5MB
@@ -436,7 +490,6 @@ const ManageCategories = () => {
                       </div>
                     )}
 
-                    {/* Hidden File Input */}
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -445,16 +498,11 @@ const ManageCategories = () => {
                       style={{ display: "none" }}
                     />
 
-                    {/* Upload Progress Bar */}
                     {uploading && (
                       <div className="mt-2">
                         <div className="d-flex justify-content-between mb-1">
-                          <span className="text-muted" style={{ fontSize: "0.75rem" }}>
-                            Uploading to Cloudinary...
-                          </span>
-                          <span className="text-primary fw-500" style={{ fontSize: "0.75rem" }}>
-                            {uploadProgress}%
-                          </span>
+                          <span className="text-muted" style={{ fontSize: "0.75rem" }}>Uploading...</span>
+                          <span className="text-primary fw-500" style={{ fontSize: "0.75rem" }}>{uploadProgress}%</span>
                         </div>
                         <div className="progress" style={{ height: 6, borderRadius: 4 }}>
                           <div
@@ -469,18 +517,26 @@ const ManageCategories = () => {
                       </div>
                     )}
                   </div>
-
                 </div>
+
+                {/* Modal Footer */}
                 <div className="modal-footer border-0 pt-0">
-                  <button type="button" className="btn btn-light" onClick={closeModal}>
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={closeModal}
+                    style={{ minHeight: 48, flex: isMobile ? 1 : "unset" }}
+                  >
                     <FiX className="me-1" /> Cancel
                   </button>
-                  <button type="submit" className="btn btn-primary" disabled={saving || uploading}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={saving || uploading}
+                    style={{ minHeight: 48, flex: isMobile ? 1 : "unset" }}
+                  >
                     {saving || uploading ? (
-                      <>
-                        <span className="spinner-border spinner-border-sm me-2" />
-                        {uploading ? "Uploading..." : "Saving..."}
-                      </>
+                      <><span className="spinner-border spinner-border-sm me-2" />{uploading ? "Uploading..." : "Saving..."}</>
                     ) : (
                       <><FiSave className="me-1" />{editingId ? "Update" : "Add Category"}</>
                     )}
@@ -492,9 +548,7 @@ const ManageCategories = () => {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════
-          DELETE CONFIRMATION MODAL
-      ══════════════════════════════════════════ */}
+      {/* ── DELETE MODAL ── */}
       {deleteTarget && (
         <div className="modal show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog modal-dialog-centered modal-sm">
@@ -510,14 +564,14 @@ const ManageCategories = () => {
                 </div>
                 <h6 className="fw-bold mb-2">Delete Category?</h6>
                 <p className="text-muted small mb-4">
-                  Are you sure you want to delete <strong>"{deleteTarget.name}"</strong>?
-                  This action cannot be undone.
+                  Are you sure you want to delete <strong>"{deleteTarget.name}"</strong>? This cannot be undone.
                 </p>
                 <div className="d-flex gap-2 justify-content-center">
                   <button
                     className="btn btn-light px-4"
                     onClick={() => setDeleteTarget(null)}
                     disabled={deleting}
+                    style={{ minHeight: 48 }}
                   >
                     Cancel
                   </button>
@@ -525,10 +579,9 @@ const ManageCategories = () => {
                     className="btn btn-danger px-4"
                     onClick={handleDeleteConfirm}
                     disabled={deleting}
+                    style={{ minHeight: 48 }}
                   >
-                    {deleting ? (
-                      <><span className="spinner-border spinner-border-sm me-2" />Deleting...</>
-                    ) : "Delete"}
+                    {deleting ? <><span className="spinner-border spinner-border-sm me-2" />Deleting...</> : "Delete"}
                   </button>
                 </div>
               </div>
@@ -536,7 +589,6 @@ const ManageCategories = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

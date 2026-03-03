@@ -5,7 +5,6 @@ import FeaturedCategories from "../components/home/FeaturedCategories";
 import GalleryPreview     from "../components/home/GalleryPreview";
 import BlogPreview        from "../components/home/BlogPreview";
 import Testimonials       from "../components/home/Testimonials";
-import ContactForm        from "../components/home/ContactForm";
 import Footer             from "../components/common/Footer";
 import ScrollToTop        from "../components/common/ScrollToTop";
 
@@ -32,8 +31,6 @@ const Home = () => {
         {/* 6. Testimonials */}
         <Testimonials />
 
-        {/* 7. Contact Form */}
-        <ContactForm />
       </main>
 
       <Footer />

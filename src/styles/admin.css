@@ -1,11 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
 
+/* Reset base padding/margin */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 /* ── ADMIN LAYOUT ───────────────────────────── */
 .admin-wrapper {
   display: flex;
   min-height: 100vh;
   background: #f4f7fb;
+  width: 100%;
 }
 
 /* ── SIDEBAR ────────────────────────────────── */
@@ -19,7 +26,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 1050; /* Base level, adjust as needed */
   transition: all 0.3s ease;
 }
 
@@ -41,6 +48,7 @@
   gap: 0.75rem;
   font-weight: 500;
   transition: all 0.25s ease;
+  text-decoration: none;
 }
 
 .admin-sidebar .nav-link:hover,
@@ -63,6 +71,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: calc(100% - 260px);
 }
 
 /* ── ADMIN NAVBAR ───────────────────────────── */
@@ -194,18 +203,72 @@
 
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 768px) {
-  .admin-sidebar {
-    width: 100%;
-    min-height: auto;
-    position: relative;
+  .admin-wrapper {
+      flex-direction: column;
   }
+
+  /* Handle the Desktop Sidebar on Mobile */
+  /* The class .d-none.d-lg-flex applied in React usually hides this component below lg screens */
+  /* If it's still showing, ensure it gets hidden or styled appropriately. */
+  .admin-sidebar.d-none.d-lg-flex {
+    display: none !important;
+  }
+
+  /* Reset main content margin */
   .admin-main {
     margin-left: 0;
+    width: 100%; 
   }
-}
 
-.admin-sidebar .nav-link {
-  display:     flex;
-  align-items: center;
-  gap:         0.75rem;
+  /* Topbar styling for mobile */
+  .admin-topbar {
+    padding: 0.75rem 1rem;
+    z-index: 900; /* Ensure it stays below the mobile slide-in menu */
+  }
+
+  .admin-content {
+    padding: 1rem; 
+  }
+
+  .admin-table {
+    border-radius: 8px;
+  }
+
+  .admin-table thead {
+    display: none; 
+  }
+
+  .admin-table tbody tr {
+    display: block;
+    border-bottom: 2px solid #e9ecef;
+    padding: 0.5rem;
+  }
+
+  .admin-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid #f1f3f5;
+  }
+
+  .admin-table tbody td:last-child {
+      border-bottom: none;
+  }
+
+  .admin-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #495057;
+    margin-right: 1rem;
+    text-transform: capitalize;
+  }
+
+  .admin-card {
+      margin-bottom: 1rem;
+  }
+
+  .view-toggle-btn {
+      display: none; 
+  }
 }

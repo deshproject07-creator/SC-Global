@@ -41,7 +41,8 @@ const slides = [
 const HeroBanner = () => {
   const [current,   setCurrent]   = useState(0);
   const [isPaused,  setIsPaused]  = useState(false);
-  const [loaded,    setLoaded]    = useState({});  // track which images are loaded
+  const [loaded,    setLoaded]    = useState({});
+  const [touchStartX, setTouchStartX] = useState(null);
   const autoRef                   = useRef(null);
   const navigate                  = useNavigate();
   const total                     = slides.length;
@@ -98,7 +99,14 @@ const HeroBanner = () => {
           min-height: 560px;
           overflow:   hidden;
           background: #0a0f1e;
-          font-family: 'Syne', sans-serif;
+          font-family: 'Playfair Display', serif;
+        }
+
+        @media (max-width: 768px) {
+          .hero-root {
+            height:     70vh;
+            min-height: 420px;
+          }
         }
 
         /* ── Each slide layer stacked absolutely ── */
@@ -168,14 +176,38 @@ const HeroBanner = () => {
         }
 
         .hero-title {
-          font-size:    clamp(2rem, 5vw, 3.6rem);
+          font-size:    clamp(1.6rem, 5vw, 3.6rem);
           font-weight:  900;
           color:        white;
-          line-height:  1.1;
-          margin-bottom: 2rem;
-          letter-spacing: -1px;
+          line-height:  1.15;
+          margin-bottom: 1.5rem;
+          letter-spacing: -0.5px;
           text-shadow:  0 4px 24px rgba(0,0,0,0.3);
           animation:    heroFadeUp 0.7s ease 0.1s both;
+          font-family:  'Playfair Display', serif;
+        }
+
+        @media (max-width: 768px) {
+          .hero-title {
+            font-size:     1.75rem;
+            margin-bottom: 1.25rem;
+            letter-spacing: 0px;
+          }
+          .hero-text-wrap {
+            max-width: 100%;
+            padding:   0 0.5rem;
+          }
+          .hero-subtitle-pill {
+            font-size: 0.75rem;
+            padding:   0.35rem 0.9rem;
+          }
+          .hero-cta-btn {
+            font-size: 0.9rem;
+            padding:   0.7rem 1.6rem;
+          }
+          .hero-arrow-btn {
+            display: none !important;
+          }
         }
 
         .hero-cta-btn {
@@ -192,7 +224,7 @@ const HeroBanner = () => {
           cursor:        pointer;
           box-shadow:    0 8px 28px rgba(13,110,253,0.45);
           transition:    all 0.28s cubic-bezier(0.34,1.56,0.64,1);
-          font-family:   'Syne', sans-serif;
+          font-family:   'Playfair Display', serif;
           letter-spacing: 0.2px;
           animation:     heroFadeUp 0.7s ease 0.2s both;
         }
@@ -256,6 +288,13 @@ const HeroBanner = () => {
         className="hero-root"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={(e) => setTouchStartX(e.touches[0].clientX)}
+        onTouchEnd={(e) => {
+          if (touchStartX === null) return;
+          const diff = touchStartX - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
+          setTouchStartX(null);
+        }}
       >
         {/* ── All slide layers rendered, opacity toggled ── */}
         {slides.map((slide, i) => (
@@ -333,7 +372,7 @@ const HeroBanner = () => {
             color:      "rgba(255,255,255,0.65)",
             fontSize:   "0.85rem",
             fontWeight: 700,
-            fontFamily: "Syne, sans-serif",
+            fontFamily: "Playfair Display, serif",
             letterSpacing: "1px",
           }}
         >

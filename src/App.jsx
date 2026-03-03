@@ -1,23 +1,24 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ToastContainer }                          from "react-toastify";
-import { AuthProvider }                            from "./context/AuthContext";
-import ProtectedRoute                              from "./components/admin/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 // ── Public Pages ───────────────────────────────
-import Home            from "./pages/Home";
-import About           from "./pages/About";
-import Products        from "./pages/Products";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Products from "./pages/Products";
 import CategoryProducts from "./pages/CategoryProducts";
-import Gallery         from "./pages/Gallery";
-import Blog            from "./pages/Blog";
-import BlogDetail      from "./pages/BlogDetail";
+import Gallery from "./pages/Gallery";
+import Blog from "./pages/Blog";
+import BlogDetail from "./pages/BlogDetail";
+import Contact from "./pages/Contact";
 
 // ── Admin Pages ────────────────────────────────
-import Login           from "./pages/Login";
+import Login from "./pages/Login";
 import ManageCategories from "./pages/admin/ManageCategories";
-import ManageProducts  from "./pages/admin/ManageProducts";
-import ManageGallery   from "./pages/admin/ManageGallery";
-import ManageBlog      from "./pages/admin/ManageBlog";
+import ManageProducts from "./pages/admin/ManageProducts";
+import ManageGallery from "./pages/admin/ManageGallery";
+import ManageBlog from "./pages/admin/ManageBlog";
 
 // ── Styles ─────────────────────────────────────
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -32,16 +33,17 @@ const App = () => {
         <Routes>
 
           {/* ── Public Routes ── */}
-          <Route path="/"                element={<Home />}             />
-          <Route path="/about"           element={<About />}            />
-          <Route path="/products"        element={<Products />}         />
-          <Route path="/products/:slug"  element={<CategoryProducts />} />
-          <Route path="/gallery"         element={<Gallery />}          />
-          <Route path="/blog"            element={<Blog />}             />
-          <Route path="/blog/:slug"      element={<BlogDetail />}       />
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:slug" element={<CategoryProducts />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogDetail />} />
 
           {/* ── Admin Auth ── */}
-          <Route path="/admin/login"     element={<Login />}            />
+          <Route path="/admin/login" element={<Login />} />
 
           {/* ── Protected Admin Routes ── */}
           <Route

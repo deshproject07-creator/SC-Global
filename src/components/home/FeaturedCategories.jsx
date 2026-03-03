@@ -49,6 +49,7 @@ const FeaturedCategories = () => {
         <section
             id="categories"
             ref={sectionRef}
+            className="categories-section"
             style={{ padding: "5rem 0", background: "#f8faff" }}
         >
             <div className="container">
@@ -158,6 +159,7 @@ const FeaturedCategories = () => {
                         {/* ── Slider ── */}
                         <div
                             ref={sliderRef}
+                            className="hide-scrollbar categories-slider"
                             style={{
                                 display: "flex",
                                 gap: "1.25rem",
@@ -166,12 +168,13 @@ const FeaturedCategories = () => {
                                 paddingBottom: "1rem",
                                 scrollbarWidth: "none",
                                 msOverflowStyle: "none",
+                                WebkitOverflowScrolling: "touch",
                             }}
-                            className="hide-scrollbar"
                         >
                             {categories.map((cat, i) => (
                                 <div
                                     key={cat.id}
+                                    className="category-card-wrap"
                                     style={{
                                         minWidth: 280,
                                         maxWidth: 280,
@@ -191,6 +194,7 @@ const FeaturedCategories = () => {
                                             <img
                                                 src={cat.imageUrl || "https://placehold.co/280x200?text=Category"}
                                                 alt={cat.name}
+                                                className="category-card-img"
                                                 style={{
                                                     width: "100%",
                                                     height: 200,
@@ -234,6 +238,25 @@ const FeaturedCategories = () => {
                                         </div>
                                     </div>
                                 </div>
+                            ))}
+                        </div>
+
+                        {/* Mobile swipe hint */}
+                        <div
+                            className="d-flex d-md-none justify-content-center mt-3"
+                            style={{ gap: "0.4rem" }}
+                        >
+                            {categories.map((_, i) => (
+                                <div
+                                    key={i}
+                                    style={{
+                                        width:        i === 0 ? 20 : 6,
+                                        height:       6,
+                                        borderRadius: 3,
+                                        background:   i === 0 ? "#0d6efd" : "#dee2e6",
+                                        transition:   "all 0.3s ease",
+                                    }}
+                                />
                             ))}
                         </div>
 
@@ -281,6 +304,27 @@ const FeaturedCategories = () => {
         @keyframes shimmer {
           0%   { background-position: 200% 0; }
           100% { background-position: -200% 0; }
+        }
+        @media (max-width: 768px) {
+          .categories-section { padding: 3rem 0 !important; }
+          .category-card-wrap {
+            min-width: 75vw !important;
+            max-width: 75vw !important;
+          }
+          .categories-slider {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            gap: 1rem !important;
+          }
+          .category-card-img {
+            height: 160px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .category-card-wrap {
+            min-width: 82vw !important;
+            max-width: 82vw !important;
+          }
         }
       `}</style>
         </section>

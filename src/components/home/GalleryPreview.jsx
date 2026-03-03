@@ -5,12 +5,12 @@ import { FiArrowRight, FiImage, FiX } from "react-icons/fi";
 import "../../styles/custom.css";
 
 const GalleryPreview = () => {
-  const [images, setImages]   = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [images, setImages]     = useState([]);
+  const [loading, setLoading]   = useState(true);
   const [lightbox, setLightbox] = useState(null);
-  const [visible, setVisible] = useState(false);
-  const sectionRef            = useRef(null);
-  const navigate              = useNavigate();
+  const [visible, setVisible]   = useState(false);
+  const sectionRef              = useRef(null);
+  const navigate                = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -25,7 +25,7 @@ const GalleryPreview = () => {
     const fetch = async () => {
       try {
         const data = await getGalleryImages();
-        setImages(data.slice(0, 6)); // show max 6 on homepage
+        setImages(data.slice(0, 6));
       } catch {
         console.error("Failed to load gallery");
       } finally {
@@ -35,24 +35,29 @@ const GalleryPreview = () => {
     fetch();
   }, []);
 
-  // Close lightbox on Escape
   useEffect(() => {
     const handleKey = (e) => { if (e.key === "Escape") setLightbox(null); };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = lightbox ? "hidden" : "unset";
+    return () => { document.body.style.overflow = "unset"; };
+  }, [lightbox]);
+
   return (
     <>
       <section
         ref={sectionRef}
+        className="gallery-preview-section"
         style={{ padding: "5rem 0", background: "#f8faff" }}
       >
         <div className="container">
 
           {/* ── Header ── */}
           <div
-            className="d-flex align-items-end justify-content-between mb-5 flex-wrap gap-3"
+            className="d-flex align-items-end justify-content-between mb-5 flex-wrap gap-3 gallery-preview-header"
             style={{
               opacity:    visible ? 1 : 0,
               transform:  visible ? "translateY(0)" : "translateY(20px)",
@@ -60,7 +65,6 @@ const GalleryPreview = () => {
             }}
           >
             <div>
-              
               <h2 className="section-title mb-0">Gallery</h2>
             </div>
             <button
@@ -78,6 +82,7 @@ const GalleryPreview = () => {
                 padding:      "0.5rem 1.25rem",
                 cursor:       "pointer",
                 transition:   "all 0.2s ease",
+                minHeight:    44,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "#0d6efd";
@@ -92,18 +97,19 @@ const GalleryPreview = () => {
             </button>
           </div>
 
-          {/* ── Loading ── */}
+          {/* ── Loading Skeleton ── */}
           {loading ? (
             <div className="row g-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="col-12 col-sm-6 col-lg-4">
+                <div key={i} className="col-6 col-sm-6 col-lg-4">
                   <div
+                    className="gallery-skeleton"
                     style={{
-                      height:       240,
-                      borderRadius: 12,
-                      background:   "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
+                      height:         240,
+                      borderRadius:   12,
+                      background:     "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)",
                       backgroundSize: "200% 100%",
-                      animation:    "shimmer 1.5s infinite",
+                      animation:      "shimmer 1.5s infinite",
                     }}
                   />
                 </div>
@@ -115,11 +121,12 @@ const GalleryPreview = () => {
               <p>No gallery images yet.</p>
             </div>
           ) : (
-            <div className="row g-3 stagger-children">
+            <div className="row g-3">
               {images.map((img, i) => (
+                // col-6 = 2 columns on mobile, col-lg-4 = 3 on desktop
                 <div
                   key={img.id}
-                  className="col-12 col-sm-6 col-lg-4"
+                  className="col-6 col-sm-6 col-lg-4"
                   style={{
                     opacity:    visible ? 1 : 0,
                     transform:  visible ? "translateY(0)" : "translateY(30px)",
@@ -127,6 +134,7 @@ const GalleryPreview = () => {
                   }}
                 >
                   <div
+                    className="gallery-img-wrap"
                     onClick={() => setLightbox(img)}
                     style={{
                       height:       240,
@@ -152,15 +160,14 @@ const GalleryPreview = () => {
                         e.target.src = "https://placehold.co/400x240?text=Image";
                       }}
                     />
-                    {/* Hover Overlay */}
                     <div
                       style={{
-                        position:   "absolute",
-                        inset:      0,
-                        background: "rgba(13,110,253,0)",
-                        transition: "background 0.3s ease",
-                        display:    "flex",
-                        alignItems: "center",
+                        position:       "absolute",
+                        inset:          0,
+                        background:     "rgba(13,110,253,0)",
+                        transition:     "background 0.3s ease",
+                        display:        "flex",
+                        alignItems:     "center",
                         justifyContent: "center",
                       }}
                       onMouseEnter={(e) => {
@@ -190,7 +197,7 @@ const GalleryPreview = () => {
             display:        "flex",
             alignItems:     "center",
             justifyContent: "center",
-            padding:        "1rem",
+            padding:        "3rem 1rem 1rem",
             animation:      "fadeIn 0.2s ease",
           }}
         >
@@ -203,8 +210,8 @@ const GalleryPreview = () => {
               background:     "rgba(255,255,255,0.15)",
               border:         "none",
               borderRadius:   "50%",
-              width:          40,
-              height:         40,
+              width:          48,
+              height:         48,
               display:        "flex",
               alignItems:     "center",
               justifyContent: "center",
@@ -212,15 +219,15 @@ const GalleryPreview = () => {
               cursor:         "pointer",
             }}
           >
-            <FiX size={20} />
+            <FiX size={22} />
           </button>
           <img
             src={lightbox.imageUrl}
             alt="Gallery"
             onClick={(e) => e.stopPropagation()}
             style={{
-              maxWidth:     "90vw",
-              maxHeight:    "85vh",
+              maxWidth:     "92vw",
+              maxHeight:    "80vh",
               objectFit:    "contain",
               borderRadius: 12,
               boxShadow:    "0 20px 60px rgba(0,0,0,0.5)",
@@ -233,6 +240,16 @@ const GalleryPreview = () => {
         @keyframes shimmer {
           0%   { background-position: 200% 0; }
           100% { background-position: -200% 0; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+          .gallery-preview-section { padding: 3rem 0 !important; }
+          .gallery-preview-header  { margin-bottom: 1.5rem !important; }
+          .gallery-img-wrap        { height: 150px !important; }
+          .gallery-skeleton        { height: 150px !important; }
         }
       `}</style>
     </>

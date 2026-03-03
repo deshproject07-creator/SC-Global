@@ -32,7 +32,17 @@ const ManageBlog = () => {
   const [imagePreview,   setImagePreview]   = useState("");
   const [uploading,      setUploading]      = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const fileInputRef                        = useRef(null);
+  
+  // ── Track Mobile State ─────────────────────
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const fileInputRef = useRef(null);
+
+  // ── Track screen size for responsive grid ──
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // ── Fetch Blogs (all including drafts) ────
   const fetchBlogs = async () => {
@@ -120,7 +130,6 @@ const ManageBlog = () => {
     try {
       let coverImage = formData.coverImage;
 
-      // Upload image if new one picked
       if (imageFile) {
         setUploading(true);
         const progressInterval = setInterval(() => {
@@ -209,6 +218,7 @@ const ManageBlog = () => {
             <button
               className="btn btn-primary d-flex align-items-center gap-2"
               onClick={openAddModal}
+              style={isMobile ? { minHeight: 44, padding: "0.5rem 1rem" } : {}}
             >
               <FiPlus /> New Post
             </button>
@@ -221,7 +231,7 @@ const ManageBlog = () => {
                 <div
                   key={i}
                   style={{
-                    height:       100,
+                    height:       isMobile ? 180 : 100, // Taller skeleton on mobile for stacked layout
                     borderRadius: 12,
                     background:   "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)",
                     backgroundSize: "200% 100%",
@@ -247,74 +257,83 @@ const ManageBlog = () => {
                   className="admin-card animate-fade-in"
                   style={{ animationDelay: `${i * 0.05}s` }}
                 >
-                  <div className="d-flex align-items-center gap-3 p-3 flex-wrap">
+                  <div 
+                    className={`d-flex align-items-${isMobile ? 'start' : 'center'} gap-3 p-3 flex-wrap`}
+                    style={isMobile ? { flexDirection: "column" } : {}}
+                  >
 
-                    {/* Cover Image */}
-                    <img
-                      src={blog.coverImage || "https://placehold.co/80x80?text=Blog"}
-                      alt={blog.title}
-                      style={{
-                        width:        80,
-                        height:       80,
-                        objectFit:    "cover",
-                        borderRadius: 10,
-                        flexShrink:   0,
-                        border:       "2px solid #e9ecef",
-                      }}
-                      onError={(e) => {
-                        e.target.src = "https://placehold.co/80x80?text=Blog";
-                      }}
-                    />
-
-                    {/* Content */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                        <h6 className="fw-bold mb-0" style={{ color: "#1a1a2e" }}>
-                          {blog.title}
-                        </h6>
-                        {/* Publish Badge */}
-                        <span
-                          className="badge rounded-pill"
+                    {/* Cover Image & Text Container (Top half on mobile) */}
+                    <div className="d-flex gap-3 w-100">
+                        {/* Cover Image */}
+                        <img
+                          src={blog.coverImage || "https://placehold.co/80x80?text=Blog"}
+                          alt={blog.title}
                           style={{
-                            background: blog.published ? "#d1fae5" : "#fff3cd",
-                            color:      blog.published ? "#065f46" : "#92400e",
-                            fontSize:   "0.7rem",
-                            fontWeight: 600,
-                            padding:    "0.25rem 0.65rem",
+                            width:        isMobile ? 100 : 80,
+                            height:       isMobile ? 100 : 80,
+                            objectFit:    "cover",
+                            borderRadius: 10,
+                            flexShrink:   0,
+                            border:       "2px solid #e9ecef",
                           }}
-                        >
-                          {blog.published ? "Published" : "Draft"}
-                        </span>
-                      </div>
-                      <p
-                        className="text-muted small mb-1"
-                        style={{
-                          display:           "-webkit-box",
-                          WebkitLineClamp:   2,
-                          WebkitBoxOrient:   "vertical",
-                          overflow:          "hidden",
-                          lineHeight:        1.5,
-                        }}
-                      >
-                        {blog.description || "No description."}
-                      </p>
-                      <span
-                        style={{
-                          fontSize: "0.72rem",
-                          color:    "#adb5bd",
-                        }}
-                      >
-                        {formatDate(blog.createdAt)}
-                        {blog.slug && (
-                          <span style={{ marginLeft: 8, opacity: 0.7 }}>
-                            · /blog/{blog.slug}
+                          onError={(e) => {
+                            e.target.src = "https://placehold.co/80x80?text=Blog";
+                          }}
+                        />
+
+                        {/* Content */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                            <h6 className="fw-bold mb-0" style={{ color: "#1a1a2e", fontSize: isMobile ? "1.1rem" : "1rem" }}>
+                              {blog.title}
+                            </h6>
+                            {/* Publish Badge */}
+                            <span
+                              className="badge rounded-pill"
+                              style={{
+                                background: blog.published ? "#d1fae5" : "#fff3cd",
+                                color:      blog.published ? "#065f46" : "#92400e",
+                                fontSize:   "0.7rem",
+                                fontWeight: 600,
+                                padding:    "0.25rem 0.65rem",
+                              }}
+                            >
+                              {blog.published ? "Published" : "Draft"}
+                            </span>
+                          </div>
+                          <p
+                            className="text-muted small mb-1"
+                            style={{
+                              display:           "-webkit-box",
+                              WebkitLineClamp:   2,
+                              WebkitBoxOrient:   "vertical",
+                              overflow:          "hidden",
+                              lineHeight:        1.5,
+                            }}
+                          >
+                            {blog.description || "No description."}
+                          </p>
+                          <span
+                            style={{
+                              fontSize: "0.72rem",
+                              color:    "#adb5bd",
+                            }}
+                          >
+                            {formatDate(blog.createdAt)}
+                            {blog.slug && !isMobile && ( // Hide slug on mobile to save space
+                              <span style={{ marginLeft: 8, opacity: 0.7 }}>
+                                · /blog/{blog.slug}
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </span>
+                        </div>
                     </div>
 
-                    {/* Actions */}
-                    <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                    {/* Actions (Stacked full width on mobile) */}
+                    <div 
+                      className={`d-flex align-items-center gap-2 flex-shrink-0 w-100 ${isMobile ? 'mt-2 pt-3 border-top' : ''}`}
+                      style={isMobile ? { justifyContent: "space-between" } : {}}
+                    >
 
                       {/* Publish Toggle */}
                       <button
@@ -322,7 +341,7 @@ const ManageBlog = () => {
                         onClick={() => handleTogglePublish(blog)}
                         disabled={togglingId === blog.id}
                         title={blog.published ? "Unpublish" : "Publish"}
-                        style={{ minWidth: 100 }}
+                        style={{ minWidth: 100, flex: isMobile ? 2 : 'unset', minHeight: isMobile ? 40 : 'unset' }}
                       >
                         {togglingId === blog.id ? (
                           <span className="spinner-border spinner-border-sm" />
@@ -333,21 +352,25 @@ const ManageBlog = () => {
                         )}
                       </button>
 
-                      {/* Edit */}
-                      <button
-                        className="btn btn-sm btn-outline-primary"
-                        onClick={() => openEditModal(blog)}
-                      >
-                        <FiEdit2 size={14} />
-                      </button>
+                      <div className="d-flex gap-2" style={isMobile ? { flex: 1 } : {}}>
+                          {/* Edit */}
+                          <button
+                            className="btn btn-sm btn-outline-primary flex-fill"
+                            onClick={() => openEditModal(blog)}
+                            style={isMobile ? { minHeight: 40 } : {}}
+                          >
+                            <FiEdit2 size={14} />
+                          </button>
 
-                      {/* Delete */}
-                      <button
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() => setDeleteTarget(blog)}
-                      >
-                        <FiTrash2 size={14} />
-                      </button>
+                          {/* Delete */}
+                          <button
+                            className="btn btn-sm btn-outline-danger flex-fill"
+                            onClick={() => setDeleteTarget(blog)}
+                            style={isMobile ? { minHeight: 40 } : {}}
+                          >
+                            <FiTrash2 size={14} />
+                          </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -358,7 +381,7 @@ const ManageBlog = () => {
       </div>
 
       {/* ══════════════════════════════════════════
-          ADD / EDIT MODAL
+          ADD / EDIT MODAL (Full screen on Mobile)
       ══════════════════════════════════════════ */}
       {showModal && (
         <div
@@ -366,13 +389,31 @@ const ManageBlog = () => {
           style={{ background: "rgba(0,0,0,0.5)" }}
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content">
-              <div className="modal-header">
+          <div 
+             className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"
+             style={isMobile ? {
+              margin:   0,
+              maxWidth: "100%",
+              height:   "100%",
+            } : {}}
+          >
+            <div 
+              className="modal-content"
+              style={isMobile ? {
+                 borderRadius: 0,
+                 height:       "100%",
+                 maxHeight:    "100%",
+               } : { borderRadius: 16 }}
+            >
+              <div className="modal-header border-0 pb-0">
                 <h5 className="modal-title fw-bold">
                   {editingId ? "Edit Blog Post" : "New Blog Post"}
                 </h5>
-                <button className="btn-close" onClick={closeModal} />
+                <button 
+                  className="btn-close" 
+                  onClick={closeModal} 
+                  style={{ minWidth: 44, minHeight: 44 }}
+                />
               </div>
 
               <form onSubmit={handleSave}>
@@ -395,6 +436,7 @@ const ManageBlog = () => {
                           onChange={(e) =>
                             setFormData({ ...formData, title: e.target.value })
                           }
+                          style={{ minHeight: 48 }}
                         />
                       </div>
 
@@ -405,7 +447,7 @@ const ManageBlog = () => {
                         </label>
                         <textarea
                           className="form-control"
-                          rows={8}
+                          rows={isMobile ? 5 : 8}
                           placeholder="Write your blog post content here..."
                           value={formData.description}
                           onChange={(e) =>
@@ -432,7 +474,7 @@ const ManageBlog = () => {
                             className="rounded"
                             style={{
                               width:      "100%",
-                              height:     220,
+                              height:     isMobile ? 180 : 220,
                               objectFit:  "cover",
                             }}
                           />
@@ -447,8 +489,8 @@ const ManageBlog = () => {
                               background:     "rgba(0,0,0,0.55)",
                               border:         "none",
                               borderRadius:   "50%",
-                              width:          30,
-                              height:         30,
+                              width:          36, // Larger target for mobile
+                              height:         36,
                               display:        "flex",
                               alignItems:     "center",
                               justifyContent: "center",
@@ -456,7 +498,7 @@ const ManageBlog = () => {
                               cursor:         "pointer",
                             }}
                           >
-                            <FiX size={14} />
+                            <FiX size={16} />
                           </button>
                           {/* Change */}
                           <button
@@ -469,16 +511,16 @@ const ManageBlog = () => {
                               background:     "rgba(13,110,253,0.85)",
                               border:         "none",
                               borderRadius:   8,
-                              padding:        "4px 10px",
+                              padding:        "6px 12px", // Larger target for mobile
                               color:          "white",
                               cursor:         "pointer",
-                              fontSize:       "0.75rem",
+                              fontSize:       "0.8rem",
                               display:        "flex",
                               alignItems:     "center",
                               gap:            4,
                             }}
                           >
-                            <FiUpload size={12} /> Change
+                            <FiUpload size={14} /> Change
                           </button>
                         </div>
                       ) : (
@@ -488,7 +530,7 @@ const ManageBlog = () => {
                           style={{
                             border:       "2px dashed #dee2e6",
                             borderRadius: 12,
-                            padding:      "3rem 2rem",
+                            padding:      isMobile ? "2rem 1rem" : "3rem 2rem", // Responsive padding
                             textAlign:    "center",
                             cursor:       "pointer",
                             background:   "#f8f9ff",
@@ -505,7 +547,7 @@ const ManageBlog = () => {
                         >
                           <FiImage size={36} color="#0d6efd" className="mb-2" />
                           <p className="mb-1 fw-500" style={{ fontSize: "0.9rem" }}>
-                            Click to upload cover image
+                            {isMobile ? "Tap to upload cover image" : "Click to upload cover image"}
                           </p>
                           <p className="mb-0 text-muted" style={{ fontSize: "0.75rem" }}>
                             JPG, PNG, WEBP — Max 5MB
@@ -573,6 +615,7 @@ const ManageBlog = () => {
                     type="button"
                     className="btn btn-light"
                     onClick={closeModal}
+                    style={{ minHeight: 48, flex: isMobile ? 1 : "unset" }}
                   >
                     <FiX className="me-1" /> Cancel
                   </button>
@@ -580,6 +623,7 @@ const ManageBlog = () => {
                     type="submit"
                     className="btn btn-primary"
                     disabled={saving || uploading}
+                    style={{ minHeight: 48, flex: isMobile ? 1 : "unset" }}
                   >
                     {saving || uploading ? (
                       <>
@@ -634,6 +678,7 @@ const ManageBlog = () => {
                     className="btn btn-light px-4"
                     onClick={() => setDeleteTarget(null)}
                     disabled={deleting}
+                    style={{ minHeight: 44, flex: 1 }}
                   >
                     Cancel
                   </button>
@@ -641,6 +686,7 @@ const ManageBlog = () => {
                     className="btn btn-danger px-4"
                     onClick={handleDeleteConfirm}
                     disabled={deleting}
+                    style={{ minHeight: 44, flex: 1 }}
                   >
                     {deleting ? (
                       <>

@@ -13,7 +13,6 @@ const Footer = () => {
   const [categories, setCategories] = useState([]);
   const navigate                    = useNavigate();
 
-  // ── Fetch Categories Dynamically ──────────
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -36,30 +35,10 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    {
-      icon:  <FiFacebook size={18} />,
-      label: "Facebook",
-      href:  "https://facebook.com",
-      color: "#1877f2",
-    },
-    {
-      icon:  <FiInstagram size={18} />,
-      label: "Instagram",
-      href:  "https://instagram.com",
-      color: "#e4405f",
-    },
-    {
-      icon:  <FiTwitter size={18} />,
-      label: "Twitter / X",
-      href:  "https://twitter.com",
-      color: "#1da1f2",
-    },
-    {
-      icon:  <FiMessageCircle size={18} />,
-      label: "WhatsApp",
-      href:  "https://wa.me/910000000000",
-      color: "#25d366",
-    },
+    { icon: <FiFacebook size={20} />,    label: "Facebook",   href: "https://facebook.com",        color: "#1877f2" },
+    { icon: <FiInstagram size={20} />,   label: "Instagram",  href: "https://instagram.com",       color: "#e4405f" },
+    { icon: <FiTwitter size={20} />,     label: "Twitter / X",href: "https://twitter.com",         color: "#1da1f2" },
+    { icon: <FiMessageCircle size={20}/>,label: "WhatsApp",   href: "https://wa.me/910000000000",  color: "#25d366" },
   ];
 
   return (
@@ -70,12 +49,8 @@ const Footer = () => {
       <div className="container">
         <div className="row g-4 pb-4">
 
-          {/* ══════════════════════════════════
-              COLUMN 1 — Brand & Contact
-          ══════════════════════════════════ */}
+          {/* ── COLUMN 1 — Brand & Contact ── */}
           <div className="col-12 col-md-6 col-lg-3">
-
-            {/* Logo + Brand */}
             <div className="d-flex align-items-center gap-2 mb-3">
               <img
                 src={logo}
@@ -89,84 +64,38 @@ const Footer = () => {
                 }}
               />
               <div>
-                <div
-                  style={{
-                    color:       "white",
-                    fontWeight:  700,
-                    fontSize:    "1rem",
-                    lineHeight:  1.1,
-                  }}
-                >
+                <div style={{ color: "white", fontWeight: 700, fontSize: "1rem", lineHeight: 1.1 }}>
                   SC Global
                 </div>
-                <div
-                  style={{
-                    color:         "rgba(255,255,255,0.5)",
-                    fontSize:      "0.58rem",
-                    letterSpacing: "1.2px",
-                    fontWeight:    600,
-                    textTransform: "uppercase",
-                  }}
-                >
+                <div style={{
+                  color: "rgba(255,255,255,0.5)", fontSize: "0.58rem",
+                  letterSpacing: "1.2px", fontWeight: 600, textTransform: "uppercase",
+                }}>
                   Exports & Imports
                 </div>
               </div>
             </div>
 
-            {/* Tagline */}
-            <p
-              style={{
-                color:      "#adb5bd",
-                fontSize:   "0.85rem",
-                lineHeight: 1.7,
-                marginBottom: "1.25rem",
-              }}
-            >
-              Connecting quality Indian products to
-              international markets with trust,
-              reliability, and excellence.
+            <p style={{ color: "#adb5bd", fontSize: "0.85rem", lineHeight: 1.7, marginBottom: "1.25rem" }}>
+              Connecting quality Indian products to international markets
+              with trust, reliability, and excellence.
             </p>
 
-            {/* Contact Info */}
             <div className="d-flex flex-column gap-2">
               {[
-                {
-                  icon: <FiMapPin size={14} />,
-                  text: "Kolhapur, Maharashtra, India",
-                },
-                {
-                  icon: <FiMail size={14} />,
-                  text: "info@scglobal.com",
-                  href: "mailto:info@scglobal.com",
-                },
-                {
-                  icon: <FiPhone size={14} />,
-                  text: "+91 00000 00000",
-                  href: "tel:+910000000000",
-                },
+                { icon: <FiMapPin size={14} />,  text: "Kolhapur, Maharashtra, India" },
+                { icon: <FiMail size={14} />,    text: "info@scglobal.com",   href: "mailto:info@scglobal.com" },
+                { icon: <FiPhone size={14} />,   text: "+91 00000 00000",     href: "tel:+910000000000" },
               ].map((item, i) => (
-                <div
-                  key={i}
-                  className="d-flex align-items-start gap-2"
-                  style={{ color: "#adb5bd", fontSize: "0.82rem" }}
-                >
-                  <span
-                    style={{
-                      color:     "#0d6efd",
-                      flexShrink: 0,
-                      marginTop:  2,
-                    }}
-                  >
+                <div key={i} className="d-flex align-items-start gap-2"
+                  style={{ color: "#adb5bd", fontSize: "0.82rem" }}>
+                  <span style={{ color: "#0d6efd", flexShrink: 0, marginTop: 2 }}>
                     {item.icon}
                   </span>
                   {item.href ? (
                     <a
                       href={item.href}
-                      style={{
-                        color:          "#adb5bd",
-                        textDecoration: "none",
-                        transition:     "color 0.2s ease",
-                      }}
+                      style={{ color: "#adb5bd", textDecoration: "none", transition: "color 0.2s ease" }}
                       onMouseEnter={(e) => e.target.style.color = "#0d6efd"}
                       onMouseLeave={(e) => e.target.style.color = "#adb5bd"}
                     >
@@ -180,21 +109,14 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* ══════════════════════════════════
-              COLUMN 2 — Quick Links
-          ══════════════════════════════════ */}
+          {/* ── COLUMN 2 — Quick Links ── */}
+          {/* col-6 on mobile so Quick Links + Products sit side by side */}
           <div className="col-6 col-md-3 col-lg-2">
-            <h5
-              style={{
-                color:        "white",
-                fontSize:     "0.92rem",
-                fontWeight:   700,
-                marginBottom: "1.25rem",
-                paddingBottom: "0.5rem",
-                borderBottom: "2px solid #0d6efd",
-                display:      "inline-block",
-              }}
-            >
+            <h5 style={{
+              color: "white", fontSize: "0.92rem", fontWeight: 700,
+              marginBottom: "1.25rem", paddingBottom: "0.5rem",
+              borderBottom: "2px solid #0d6efd", display: "inline-block",
+            }}>
               Quick Links
             </h5>
             <ul className="list-unstyled d-flex flex-column gap-2 mb-0">
@@ -203,13 +125,12 @@ const Footer = () => {
                   <Link
                     to={link.to}
                     style={{
-                      color:          "#adb5bd",
-                      textDecoration: "none",
-                      fontSize:       "0.85rem",
-                      display:        "flex",
-                      alignItems:     "center",
-                      gap:            "0.4rem",
-                      transition:     "all 0.2s ease",
+                      color: "#adb5bd", textDecoration: "none",
+                      fontSize: "0.85rem", display: "flex",
+                      alignItems: "center", gap: "0.4rem",
+                      transition: "all 0.2s ease",
+                      // bigger tap target on mobile
+                      minHeight: 36,
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.color       = "#0d6efd";
@@ -228,73 +149,46 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* ══════════════════════════════════
-              COLUMN 3 — Products (Dynamic)
-          ══════════════════════════════════ */}
+          {/* ── COLUMN 3 — Products (Dynamic) ── */}
+          {/* col-6 on mobile so it sits beside Quick Links */}
           <div className="col-6 col-md-3 col-lg-3">
-            <h5
-              style={{
-                color:        "white",
-                fontSize:     "0.92rem",
-                fontWeight:   700,
-                marginBottom: "1.25rem",
-                paddingBottom: "0.5rem",
-                borderBottom: "2px solid #0d6efd",
-                display:      "inline-block",
-              }}
-            >
+            <h5 style={{
+              color: "white", fontSize: "0.92rem", fontWeight: 700,
+              marginBottom: "1.25rem", paddingBottom: "0.5rem",
+              borderBottom: "2px solid #0d6efd", display: "inline-block",
+            }}>
               Our Products
             </h5>
             <ul className="list-unstyled d-flex flex-column gap-2 mb-0">
-              {/* All Products Link */}
               <li>
                 <Link
                   to="/products"
                   style={{
-                    color:          "#0d6efd",
-                    textDecoration: "none",
-                    fontSize:       "0.85rem",
-                    display:        "flex",
-                    alignItems:     "center",
-                    gap:            "0.4rem",
-                    fontWeight:     600,
-                    transition:     "all 0.2s ease",
+                    color: "#0d6efd", textDecoration: "none",
+                    fontSize: "0.85rem", display: "flex",
+                    alignItems: "center", gap: "0.4rem",
+                    fontWeight: 600, transition: "all 0.2s ease",
+                    minHeight: 36,
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.paddingLeft = "4px";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.paddingLeft = "0px";
-                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.paddingLeft = "4px"}
+                  onMouseLeave={(e) => e.currentTarget.style.paddingLeft = "0px"}
                 >
                   <FiGlobe size={12} style={{ flexShrink: 0 }} />
                   All Products
                 </Link>
               </li>
-
-              {/* Dynamic Categories */}
               {categories.length === 0 ? (
-                <li
-                  style={{
-                    color:    "#6c757d",
-                    fontSize: "0.82rem",
-                  }}
-                >
-                  Loading...
-                </li>
+                <li style={{ color: "#6c757d", fontSize: "0.82rem" }}>Loading...</li>
               ) : (
                 categories.map((cat) => (
                   <li key={cat.id}>
                     <Link
                       to={`/products/${cat.slug}`}
                       style={{
-                        color:          "#adb5bd",
-                        textDecoration: "none",
-                        fontSize:       "0.85rem",
-                        display:        "flex",
-                        alignItems:     "center",
-                        gap:            "0.4rem",
-                        transition:     "all 0.2s ease",
+                        color: "#adb5bd", textDecoration: "none",
+                        fontSize: "0.85rem", display: "flex",
+                        alignItems: "center", gap: "0.4rem",
+                        transition: "all 0.2s ease", minHeight: 36,
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.color       = "#0d6efd";
@@ -314,26 +208,18 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* ══════════════════════════════════
-              COLUMN 4 — Social Media
-          ══════════════════════════════════ */}
+          {/* ── COLUMN 4 — Social Media ── */}
           <div className="col-12 col-md-6 col-lg-4">
-            <h5
-              style={{
-                color:        "white",
-                fontSize:     "0.92rem",
-                fontWeight:   700,
-                marginBottom: "1.25rem",
-                paddingBottom: "0.5rem",
-                borderBottom: "2px solid #0d6efd",
-                display:      "inline-block",
-              }}
-            >
+            <h5 style={{
+              color: "white", fontSize: "0.92rem", fontWeight: 700,
+              marginBottom: "1.25rem", paddingBottom: "0.5rem",
+              borderBottom: "2px solid #0d6efd", display: "inline-block",
+            }}>
               Follow Us
             </h5>
 
-            {/* Social Icons */}
-            <div className="d-flex gap-3 mb-4">
+            {/* Social Icons — 48px tap targets on mobile */}
+            <div className="d-flex gap-3 mb-4 flex-wrap">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
@@ -342,8 +228,8 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   title={social.label}
                   style={{
-                    width:          42,
-                    height:         42,
+                    width:          48,
+                    height:         48,
                     borderRadius:   "50%",
                     background:     "rgba(255,255,255,0.08)",
                     border:         "1px solid rgba(255,255,255,0.12)",
@@ -374,35 +260,18 @@ const Footer = () => {
               ))}
             </div>
 
-            {/* Newsletter / CTA */}
-            <div
-              style={{
-                background:   "rgba(13,110,253,0.12)",
-                border:       "1px solid rgba(13,110,253,0.25)",
-                borderRadius: 12,
-                padding:      "1.25rem",
-              }}
-            >
-              <p
-                style={{
-                  color:        "white",
-                  fontWeight:   600,
-                  fontSize:     "0.88rem",
-                  marginBottom: "0.5rem",
-                }}
-              >
+            {/* CTA Card */}
+            <div style={{
+              background:   "rgba(13,110,253,0.12)",
+              border:       "1px solid rgba(13,110,253,0.25)",
+              borderRadius: 12,
+              padding:      "1.25rem",
+            }}>
+              <p style={{ color: "white", fontWeight: 600, fontSize: "0.88rem", marginBottom: "0.5rem" }}>
                 Ready to Trade with Us?
               </p>
-              <p
-                style={{
-                  color:        "#adb5bd",
-                  fontSize:     "0.8rem",
-                  lineHeight:   1.6,
-                  marginBottom: "1rem",
-                }}
-              >
-                Get in touch and let us help you source premium
-                export products for your business.
+              <p style={{ color: "#adb5bd", fontSize: "0.8rem", lineHeight: 1.6, marginBottom: "1rem" }}>
+                Get in touch and let us help you source premium export products for your business.
               </p>
               <button
                 onClick={() => navigate("/#contact")}
@@ -414,16 +283,13 @@ const Footer = () => {
                   color:        "white",
                   fontWeight:   600,
                   fontSize:     "0.85rem",
-                  padding:      "0.6rem",
+                  padding:      "0.75rem",
                   cursor:       "pointer",
                   transition:   "all 0.25s ease",
+                  minHeight:    48,
                 }}
-                onMouseEnter={(e) =>
-                  e.currentTarget.style.opacity = "0.88"
-                }
-                onMouseLeave={(e) =>
-                  e.currentTarget.style.opacity = "1"
-                }
+                onMouseEnter={(e) => e.currentTarget.style.opacity = "0.88"}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
               >
                 Contact Us
               </button>
@@ -431,40 +297,17 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* ══════════════════════════════════════
-            BOTTOM BAR
-        ══════════════════════════════════════ */}
+        {/* ── Bottom Bar ── */}
         <div
           className="d-flex align-items-center justify-content-between flex-wrap gap-2 py-3"
           style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
-          <p
-            className="mb-0"
-            style={{ color: "#6c757d", fontSize: "0.8rem" }}
-          >
-            © {new Date().getFullYear()} SC Global Exports & Imports.
-            All rights reserved.
+          <p className="mb-0" style={{ color: "#6c757d", fontSize: "0.8rem" }}>
+            © {new Date().getFullYear()} SC Global Exports & Imports. All rights reserved.
           </p>
-
           <div className="d-flex align-items-center gap-3">
-            <span
-              style={{
-                color:    "#6c757d",
-                fontSize: "0.78rem",
-              }}
-            >
-              Made with ❤️ in India
-            </span>
-
-            {/* Subtle Admin Link */}
-            <Link
-              to="/admin/login"
-              className="footer-admin-link"
-              style={{
-                color:    "#6c757d",
-                fontSize: "0.72rem",
-              }}
-            >
+            <span style={{ color: "#6c757d", fontSize: "0.78rem" }}>Made with ❤️ in India</span>
+            <Link to="/admin/login" className="footer-admin-link" style={{ color: "#6c757d", fontSize: "0.72rem" }}>
               Admin
             </Link>
           </div>

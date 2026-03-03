@@ -4,27 +4,41 @@ import {
   addGalleryImage,
   deleteGalleryImage,
   updateGalleryOrder,
-}                                       from "../../firebase/firestore";
-import { uploadToCloudinary }           from "../../cloudinary/config";
-import { toast }                        from "react-toastify";
+} from "../../firebase/firestore";
+import { uploadToCloudinary } from "../../cloudinary/config";
+import { toast } from "react-toastify";
 import {
   FiPlus, FiTrash2, FiImage,
   FiUpload, FiMove, FiX
-}                                       from "react-icons/fi";
-import AdminSidebar                     from "../../components/admin/AdminSidebar";
-import AdminNavbar                      from "../../components/admin/AdminNavbar";
+} from "react-icons/fi";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminNavbar from "../../components/admin/AdminNavbar";
 import "../../styles/admin.css";
 
 const ManageGallery = () => {
-  const [images,        setImages]        = useState([]);
-  const [loading,       setLoading]       = useState(true);
-  const [uploading,     setUploading]     = useState(false);
-  const [uploadProgress,setUploadProgress]= useState(0);
-  const [deleteTarget,  setDeleteTarget]  = useState(null);
-  const [deleting,      setDeleting]      = useState(false);
-  const [dragIndex,     setDragIndex]     = useState(null);
-  const [dragOver,      setDragOver]      = useState(null);
-  const fileInputRef                      = useRef(null);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOver, setDragOver] = useState(null);
+  
+  // ── Track Mobile State ─────────────────────
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const fileInputRef = useRef(null);
+
+  // ── Track screen size for responsive grid ──
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Add event listener for real-time adjustments
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // ── Fetch Images ───────────────────────────
   const fetchImages = async () => {
@@ -46,7 +60,7 @@ const ManageGallery = () => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
-    // Validate each file
+    // Validate each file against allowed formats and size limits
     const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     for (const file of files) {
       if (!allowed.includes(file.type)) {
@@ -65,10 +79,10 @@ const ManageGallery = () => {
     try {
       const total = files.length;
       for (let i = 0; i < total; i++) {
-        // Simulate progress per file
+        // Simulate progress per file for visual feedback
         const progressInterval = setInterval(() => {
           setUploadProgress((prev) => {
-            const base    = ((i) / total) * 100;
+            const base = ((i) / total) * 100;
             const ceiling = ((i + 1) / total) * 100 - 5;
             if (prev >= ceiling) {
               clearInterval(progressInterval);
@@ -135,15 +149,15 @@ const ManageGallery = () => {
       return;
     }
 
-    // Reorder locally
+    // Reorder locally first for immediate UI response
     const reordered = [...images];
-    const [moved]   = reordered.splice(dragIndex, 1);
+    const [moved] = reordered.splice(dragIndex, 1);
     reordered.splice(dropIndex, 0, moved);
     setImages(reordered);
     setDragIndex(null);
     setDragOver(null);
 
-    // Persist new order to Firestore
+    // Persist new order to Firestore backend
     try {
       await Promise.all(
         reordered.map((img, i) => updateGalleryOrder(img.id, i + 1))
@@ -181,6 +195,8 @@ const ManageGallery = () => {
                 className="btn btn-primary d-flex align-items-center gap-2"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
+                // Increase tap target size for mobile interfaces
+                style={isMobile ? { padding: "0.75rem 1rem", minHeight: 44 } : {}}
               >
                 {uploading ? (
                   <>
@@ -224,7 +240,7 @@ const ManageGallery = () => {
                 <div
                   className="progress-bar"
                   style={{
-                    width:      `${uploadProgress}%`,
+                    width: `${uploadProgress}%`,
                     background: "linear-gradient(90deg, #0d6efd, #084298)",
                     transition: "width 0.3s ease",
                   }}
@@ -239,9 +255,9 @@ const ManageGallery = () => {
               className="mb-4 d-flex align-items-center gap-2 p-3 rounded-3"
               style={{
                 background: "#f8f9ff",
-                border:     "1px dashed #bdd3fe",
-                color:      "#6c757d",
-                fontSize:   "0.82rem",
+                border: "1px dashed #bdd3fe",
+                color: "#6c757d",
+                fontSize: "0.82rem",
               }}
             >
               <FiMove size={16} color="#0d6efd" />
@@ -255,42 +271,44 @@ const ManageGallery = () => {
           {loading ? (
             <div className="row g-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="col-12 col-sm-6 col-lg-4">
+                 // Responsive loading skeletons matching the grid structure
+                <div key={i} className={`col-${isMobile ? '6' : '12'} col-sm-6 col-lg-4`}>
                   <div
                     style={{
-                      height:       220,
+                      height: isMobile ? 150 : 220, // Shorter skeletons on mobile
                       borderRadius: 12,
-                      background:   "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)",
+                      background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)",
                       backgroundSize: "200% 100%",
-                      animation:    "shimmer 1.5s infinite",
+                      animation: "shimmer 1.5s infinite",
                     }}
                   />
                 </div>
               ))}
             </div>
 
-          /* Empty State */
+            /* Empty State */
           ) : images.length === 0 ? (
             <div
               className="text-center py-5"
               onClick={() => fileInputRef.current?.click()}
               style={{
-                border:       "2px dashed #dee2e6",
+                border: "2px dashed #dee2e6",
                 borderRadius: 16,
-                cursor:       "pointer",
-                background:   "#f8f9ff",
-                transition:   "all 0.2s ease",
+                cursor: "pointer",
+                background: "#f8f9ff",
+                transition: "all 0.2s ease",
+                padding: isMobile ? "2rem 1rem" : "3rem", // Adjust padding for mobile
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "#0d6efd";
-                e.currentTarget.style.background  = "#e8f0fe";
+                e.currentTarget.style.background = "#e8f0fe";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "#dee2e6";
-                e.currentTarget.style.background  = "#f8f9ff";
+                e.currentTarget.style.background = "#f8f9ff";
               }}
             >
-              <FiImage size={52} className="mb-3" style={{ color: "#0d6efd", opacity: 0.5 }} />
+              <FiImage size={isMobile ? 40 : 52} className="mb-3" style={{ color: "#0d6efd", opacity: 0.5 }} />
               <h6 style={{ color: "#6c757d", fontWeight: 600 }}>
                 No images yet
               </h6>
@@ -301,8 +319,8 @@ const ManageGallery = () => {
                 className="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-3"
                 style={{
                   background: "#0d6efd",
-                  color:      "white",
-                  fontSize:   "0.85rem",
+                  color: "white",
+                  fontSize: "0.85rem",
                   fontWeight: 600,
                 }}
               >
@@ -310,34 +328,36 @@ const ManageGallery = () => {
               </div>
             </div>
 
-          /* Image Grid */
+            /* Image Grid */
           ) : (
-            <div className="row g-3">
+             // Apply smaller gutters on mobile devices for tighter layouts
+            <div className={`row ${isMobile ? 'g-2' : 'g-3'}`}>
               {images.map((img, i) => (
                 <div
                   key={img.id}
-                  className="col-12 col-sm-6 col-lg-4"
+                  // Force a 2-column layout on extra small screens using col-6
+                  className={`col-${isMobile ? '6' : '12'} col-sm-6 col-lg-4`}
                   draggable
                   onDragStart={() => handleDragStart(i)}
-                  onDragOver={(e)  => handleDragOver(e, i)}
-                  onDrop={(e)      => handleDrop(e, i)}
+                  onDragOver={(e) => handleDragOver(e, i)}
+                  onDrop={(e) => handleDrop(e, i)}
                   onDragEnd={handleDragEnd}
                   style={{
-                    opacity:    dragIndex === i ? 0.4 : 1,
+                    opacity: dragIndex === i ? 0.4 : 1,
                     transition: "opacity 0.2s ease",
                   }}
                 >
                   <div
                     style={{
                       borderRadius: 12,
-                      overflow:     "hidden",
-                      position:     "relative",
-                      boxShadow:    dragOver === i
+                      overflow: "hidden",
+                      position: "relative",
+                      boxShadow: dragOver === i
                         ? "0 0 0 3px #0d6efd, 0 8px 24px rgba(13,110,253,0.2)"
                         : "0 2px 12px rgba(0,0,0,0.08)",
-                      transition:   "box-shadow 0.2s ease",
-                      background:   "#e9ecef",
-                      cursor:       "grab",
+                      transition: "box-shadow 0.2s ease",
+                      background: "#e9ecef",
+                      cursor: "grab",
                     }}
                   >
                     {/* Image */}
@@ -345,10 +365,11 @@ const ManageGallery = () => {
                       src={img.imageUrl}
                       alt={`Gallery ${i + 1}`}
                       style={{
-                        width:      "100%",
-                        height:     200,
-                        objectFit:  "cover",
-                        display:    "block",
+                        width: "100%",
+                        // Reduce image height slightly on mobile to fit 2 columns nicely
+                        height: isMobile ? 150 : 200, 
+                        objectFit: "cover",
+                        display: "block",
                         userSelect: "none",
                         pointerEvents: "none",
                       }}
@@ -360,15 +381,15 @@ const ManageGallery = () => {
                     {/* Order Badge */}
                     <div
                       style={{
-                        position:     "absolute",
-                        top:          10,
-                        left:         10,
-                        background:   "rgba(0,0,0,0.5)",
+                        position: "absolute",
+                        top: 8,
+                        left: 8,
+                        background: "rgba(0,0,0,0.5)",
                         borderRadius: 6,
-                        padding:      "2px 8px",
-                        color:        "white",
-                        fontSize:     "0.72rem",
-                        fontWeight:   700,
+                        padding: "2px 8px",
+                        color: "white",
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
                       }}
                     >
                       #{i + 1}
@@ -377,42 +398,46 @@ const ManageGallery = () => {
                     {/* Drag Handle */}
                     <div
                       style={{
-                        position:       "absolute",
-                        top:            10,
-                        left:           "50%",
-                        transform:      "translateX(-50%)",
-                        background:     "rgba(0,0,0,0.4)",
-                        borderRadius:   6,
-                        padding:        "4px 8px",
-                        color:          "rgba(255,255,255,0.85)",
-                        fontSize:       "0.7rem",
-                        display:        "flex",
-                        alignItems:     "center",
-                        gap:            "4px",
-                        pointerEvents:  "none",
+                        position: "absolute",
+                        top: 8,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        background: "rgba(0,0,0,0.4)",
+                        borderRadius: 6,
+                        padding: "4px 8px",
+                        color: "rgba(255,255,255,0.85)",
+                        // Slightly smaller font and icon on mobile screens
+                        fontSize: isMobile ? "0.65rem" : "0.7rem", 
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        // Note: pointerEvents is 'none' so drag starts on the whole container
+                        pointerEvents: "none",
                       }}
                     >
-                      <FiMove size={12} /> Drag
+                      <FiMove size={isMobile ? 10 : 12} /> Drag
                     </div>
 
                     {/* Delete Button */}
                     <button
                       onClick={() => setDeleteTarget(img)}
                       style={{
-                        position:       "absolute",
-                        top:            10,
-                        right:          10,
-                        background:     "rgba(220,53,69,0.85)",
-                        border:         "none",
-                        borderRadius:   "50%",
-                        width:          32,
-                        height:         32,
-                        display:        "flex",
-                        alignItems:     "center",
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        background: "rgba(220,53,69,0.85)",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: isMobile ? 28 : 32, // Smaller button on mobile
+                        height: isMobile ? 28 : 32,
+                        display: "flex",
+                        alignItems: "center",
                         justifyContent: "center",
-                        color:          "white",
-                        cursor:         "pointer",
-                        transition:     "all 0.2s ease",
+                        color: "white",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                        // Make sure button has high z-index to be clickable
+                        zIndex: 10,
                       }}
                       onMouseEnter={(e) =>
                         e.currentTarget.style.background = "rgba(220,53,69,1)"
@@ -421,7 +446,7 @@ const ManageGallery = () => {
                         e.currentTarget.style.background = "rgba(220,53,69,0.85)"
                       }
                     >
-                      <FiTrash2 size={14} />
+                      <FiTrash2 size={isMobile ? 12 : 14} />
                     </button>
                   </div>
                 </div>
@@ -448,9 +473,9 @@ const ManageGallery = () => {
                   src={deleteTarget.imageUrl}
                   alt="To delete"
                   style={{
-                    width:        "100%",
-                    height:       120,
-                    objectFit:    "cover",
+                    width: "100%",
+                    height: 120,
+                    objectFit: "cover",
                     borderRadius: 10,
                     marginBottom: "1rem",
                   }}
@@ -459,14 +484,14 @@ const ManageGallery = () => {
 
                 <div
                   style={{
-                    width:          48,
-                    height:         48,
-                    background:     "#fff0f0",
-                    borderRadius:   "50%",
-                    display:        "flex",
-                    alignItems:     "center",
+                    width: 48,
+                    height: 48,
+                    background: "#fff0f0",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
                     justifyContent: "center",
-                    margin:         "0 auto 0.75rem",
+                    margin: "0 auto 0.75rem",
                   }}
                 >
                   <FiTrash2 size={20} color="#dc3545" />
@@ -483,6 +508,8 @@ const ManageGallery = () => {
                     className="btn btn-light px-4"
                     onClick={() => setDeleteTarget(null)}
                     disabled={deleting}
+                     // Ensure buttons are easily tappable on mobile devices
+                    style={isMobile ? { minHeight: 44, flex: 1 } : {}}
                   >
                     Cancel
                   </button>
@@ -490,6 +517,8 @@ const ManageGallery = () => {
                     className="btn btn-danger px-4"
                     onClick={handleDeleteConfirm}
                     disabled={deleting}
+                     // Ensure buttons are easily tappable on mobile devices
+                    style={isMobile ? { minHeight: 44, flex: 1 } : {}}
                   >
                     {deleting ? (
                       <>

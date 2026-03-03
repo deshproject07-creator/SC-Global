@@ -9,8 +9,15 @@ const Navbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 769);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -41,6 +48,7 @@ const Navbar = () => {
     { label: "About", to: "/about" },
     { label: "Gallery", to: "/gallery" },
     { label: "Blog", to: "/blog" },
+    { label: "Contact", to: "/contact" },
   ];
 
   return (
@@ -130,15 +138,16 @@ const Navbar = () => {
         .sidebar-nav-link {
           display:         flex;
           align-items:     center;
-          padding:         0.9rem 1.5rem;
+          padding:         1rem 1.5rem;
           color:           #3a3a5c;
           font-family:     'Playfair Display', serif;
           font-weight:     600;
-          font-size:       1.05rem;
+          font-size:       1.08rem;
           text-decoration: none;
           border-left:     3px solid transparent;
           transition:      all 0.2s ease;
           gap:             0.6rem;
+          min-height:      52px;
         }
 
         .sidebar-nav-link:hover,
@@ -146,6 +155,18 @@ const Navbar = () => {
           color:            #0d6efd;
           background:       #e8f0fe;
           border-left-color: #0d6efd;
+        }
+
+        /* ── MOBILE OVERRIDES ── */
+        @media (max-width: 768px) {
+          .navbar-brand-fullname { display: none !important; }
+          .navbar-brand-shortname { display: block !important; }
+          .navbar-tagline { display: none !important; }
+        }
+
+        @media (min-width: 769px) {
+          .navbar-brand-fullname { display: block !important; }
+          .navbar-brand-shortname { display: none !important; }
         }
       `}</style>
 
@@ -177,7 +198,7 @@ const Navbar = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            height: scrolled ? 80 : 96,
+            height: isMobile ? 64 : scrolled ? 80 : 96,
             transition: "height 0.35s ease",
           }}
         >
@@ -196,8 +217,8 @@ const Navbar = () => {
               src={logo}
               alt="SC Global"
               style={{
-                width: scrolled ? 58 : 68,
-                height: scrolled ? 58 : 68,
+                width: isMobile ? 42 : scrolled ? 58 : 68,
+                height: isMobile ? 42 : scrolled ? 58 : 68,
                 borderRadius: "14px",
                 objectFit: "cover",
                 transition: "all 0.35s ease",
@@ -210,11 +231,12 @@ const Navbar = () => {
               }}
             />
             <div style={{ lineHeight: 1.15 }}>
+              {/* Full name — desktop only */}
               <div
+                className="navbar-brand-fullname"
                 style={{
                   fontWeight: 900,
                   fontSize: scrolled ? "1.25rem" : "1.45rem",
-                  // ── Blue when scrolled, white when transparent ──
                   color: scrolled ? "#0d6efd" : "white",
                   letterSpacing: "0px",
                   fontFamily: "Playfair Display, serif",
@@ -225,10 +247,26 @@ const Navbar = () => {
               >
                 SC Global Imports & Exports
               </div>
+              {/* Short name — mobile only */}
               <div
+                className="navbar-brand-shortname"
+                style={{
+                  fontWeight: 900,
+                  fontSize: "1.15rem",
+                  color: scrolled ? "#0d6efd" : "white",
+                  fontFamily: "Playfair Display, serif",
+                  transition: "all 0.35s ease",
+                  whiteSpace: "nowrap",
+                  textShadow: scrolled ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
+                }}
+              >
+                SC Global
+              </div>
+              {/* Tagline — desktop only */}
+              <div
+                className="navbar-tagline"
                 style={{
                   fontSize: "0.68rem",
-                  // ── Muted when scrolled, white-ish when transparent ──
                   color: scrolled ? "#6c757d" : "rgba(255,255,255,0.75)",
                   letterSpacing: "2px",
                   fontWeight: 600,
@@ -258,29 +296,6 @@ const Navbar = () => {
                 {link.label}
               </NavLink>
             ))}
-
-            {/* Contact — scroll button, not a route */}
-            <button
-              onClick={() => {
-                if (window.location.pathname !== "/") {
-                  navigate("/");
-                  setTimeout(() => {
-                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                  }, 300);
-                } else {
-                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
-              className={`nav-link-item ${scrolled ? "scrolled-link" : "transparent-link"}`}
-              style={{
-                border: "none",
-                background: "transparent",
-                cursor: "pointer",
-                fontFamily: "Playfair Display, serif",
-              }}
-            >
-              Contact
-            </button>
 
 
             {/* ── Products Dropdown ── */}
@@ -371,7 +386,16 @@ const Navbar = () => {
 
             {/* ── Get a Quote CTA ── */}
             <button
-              onClick={() => navigate("/#contact")}
+              onClick={() => {
+                if (window.location.pathname !== "/") {
+                  navigate("/");
+                  setTimeout(() => {
+                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                  }, 300);
+                } else {
+                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
               style={{
                 marginLeft: "0.5rem",
                 background: scrolled
@@ -424,15 +448,18 @@ const Navbar = () => {
                 ? "none"
                 : "1.5px solid rgba(255,255,255,0.4)",
               borderRadius: "12px",
-              padding: "0.6rem",
+              padding: isMobile ? "0.75rem" : "0.6rem",
               cursor: "pointer",
-              // ── Blue when scrolled, white when transparent ──
               color: scrolled ? "#0d6efd" : "white",
               display: "flex",
               transition: "all 0.3s ease",
+              minWidth: 48,
+              minHeight: 48,
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <FiMenu size={28} />
+            <FiMenu size={isMobile ? 26 : 28} />
           </button>
         </div>
       </nav>
@@ -460,7 +487,7 @@ const Navbar = () => {
           position: "fixed",
           top: 0,
           left: 0,
-          width: 300,
+          width: isMobile ? "80vw" : 300,
           height: "100vh",
           background: "white",
           zIndex: 1200,
@@ -552,6 +579,8 @@ const Navbar = () => {
               {link.label}
             </NavLink>
           ))}
+
+          
 
           {/* Products Section Label */}
           <div

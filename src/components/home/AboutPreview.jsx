@@ -10,6 +10,18 @@ const stats = [
     { icon: <FiShield size={20} />, value: "100%", label: "Quality Assured" },
 ];
 
+const aboutMobileStyles = `
+  @media (max-width: 768px) {
+    .about-section { padding: 3rem 0 !important; }
+    .about-floating-badge { display: none !important; }
+    .about-image { height: 240px !important; }
+    .about-content { padding-top: 1.5rem !important; }
+    .about-stat-value { font-size: 1.1rem !important; }
+    .about-stat-label { font-size: 0.65rem !important; }
+    .about-dot-grid  { display: none !important; }
+  }
+`;
+
 const AboutPreview = () => {
     const [visible, setVisible] = useState(false);
     const sectionRef = useRef(null);
@@ -26,8 +38,11 @@ const AboutPreview = () => {
     const navigate = useNavigate();
 
     return (
+        <>
+        <style>{aboutMobileStyles}</style>
         <section
             ref={sectionRef}
+            className="about-section"
             style={{ padding: "5rem 0", background: "white" }}
         >
             <div className="container">
@@ -47,6 +62,7 @@ const AboutPreview = () => {
                             <img
                                 src={welcomeImg}
                                 alt="SC Global Exports & Imports"
+                                className="about-image"
                                 style={{
                                     width: "100%",
                                     height: 340,
@@ -58,6 +74,7 @@ const AboutPreview = () => {
 
                             {/* Floating Badge */}
                             <div
+                                className="about-floating-badge"
                                 style={{
                                     position: "absolute",
                                     bottom: -20,
@@ -94,6 +111,7 @@ const AboutPreview = () => {
 
                             {/* Decorative dot grid */}
                             <div
+                                className="about-dot-grid"
                                 style={{
                                     position: "absolute",
                                     top: -16,
@@ -197,6 +215,7 @@ const AboutPreview = () => {
                                             {stat.icon}
                                         </div>
                                         <div
+                                            className="about-stat-value"
                                             style={{
                                                 fontWeight: 800,
                                                 fontSize: "1.3rem",
@@ -207,6 +226,7 @@ const AboutPreview = () => {
                                             {stat.value}
                                         </div>
                                         <div
+                                            className="about-stat-label"
                                             style={{
                                                 fontSize: "0.72rem",
                                                 color: "#6c757d",
@@ -254,6 +274,7 @@ const AboutPreview = () => {
                 </div>
             </div>
         </section>
+        </>
     );
 };
 

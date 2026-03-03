@@ -24,8 +24,8 @@ const BlogPreview = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const data = await getBlogs(true); // published only
-        setBlogs(data.slice(0, 3));        // latest 3
+        const data = await getBlogs(true);
+        setBlogs(data.slice(0, 3));
       } catch {
         console.error("Failed to load blogs");
       } finally {
@@ -38,13 +38,14 @@ const BlogPreview = () => {
   return (
     <section
       ref={sectionRef}
+      className="blog-preview-section"
       style={{ padding: "5rem 0", background: "white" }}
     >
       <div className="container">
 
         {/* ── Header ── */}
         <div
-          className="d-flex align-items-end justify-content-between mb-5 flex-wrap gap-3"
+          className="d-flex align-items-end justify-content-between mb-5 flex-wrap gap-3 blog-preview-header"
           style={{
             opacity:    visible ? 1 : 0,
             transform:  visible ? "translateY(0)" : "translateY(20px)",
@@ -52,7 +53,6 @@ const BlogPreview = () => {
           }}
         >
           <div>
-            
             <h2 className="section-title mb-0">From Our Blog</h2>
           </div>
           <button
@@ -70,6 +70,7 @@ const BlogPreview = () => {
               padding:      "0.5rem 1.25rem",
               cursor:       "pointer",
               transition:   "all 0.2s ease",
+              minHeight:    44,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = "#0d6efd";
@@ -92,10 +93,10 @@ const BlogPreview = () => {
                 <div style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 16px rgba(0,0,0,0.06)" }}>
                   <div
                     style={{
-                      height:       200,
-                      background:   "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
+                      height:         200,
+                      background:     "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
                       backgroundSize: "200% 100%",
-                      animation:    "shimmer 1.5s infinite",
+                      animation:      "shimmer 1.5s infinite",
                     }}
                   />
                   <div style={{ padding: "1.25rem" }}>
@@ -103,13 +104,13 @@ const BlogPreview = () => {
                       <div
                         key={j}
                         style={{
-                          height:       14,
-                          width:        `${w}%`,
-                          borderRadius: 6,
-                          background:   "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
+                          height:         14,
+                          width:          `${w}%`,
+                          borderRadius:   6,
+                          background:     "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
                           backgroundSize: "200% 100%",
-                          animation:    "shimmer 1.5s infinite",
-                          marginBottom: 10,
+                          animation:      "shimmer 1.5s infinite",
+                          marginBottom:   10,
                         }}
                       />
                     ))}
@@ -138,15 +139,16 @@ const BlogPreview = () => {
                 <div
                   onClick={() => navigate(`/blog/${blog.slug}`)}
                   style={{
-                    borderRadius: 16,
-                    overflow:     "hidden",
-                    boxShadow:    "0 4px 20px rgba(0,0,0,0.07)",
-                    background:   "white",
-                    cursor:       "pointer",
-                    transition:   "all 0.3s ease",
-                    height:       "100%",
-                    display:      "flex",
+                    borderRadius:  16,
+                    overflow:      "hidden",
+                    boxShadow:     "0 4px 20px rgba(0,0,0,0.07)",
+                    background:    "white",
+                    cursor:        "pointer",
+                    transition:    "all 0.3s ease",
+                    height:        "100%",
+                    display:       "flex",
                     flexDirection: "column",
+                    border:        "1px solid #f1f3f5",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-6px)";
@@ -178,22 +180,19 @@ const BlogPreview = () => {
 
                   {/* Content */}
                   <div style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
-                    {/* Date */}
                     <div
                       style={{
-                        display:    "flex",
-                        alignItems: "center",
-                        gap:        "0.4rem",
-                        color:      "#adb5bd",
-                        fontSize:   "0.78rem",
+                        display:      "flex",
+                        alignItems:   "center",
+                        gap:          "0.4rem",
+                        color:        "#adb5bd",
+                        fontSize:     "0.78rem",
                         marginBottom: "0.6rem",
                       }}
                     >
                       <FiCalendar size={12} />
                       {formatDate(blog.createdAt)}
                     </div>
-
-                    {/* Title */}
                     <h6
                       style={{
                         fontWeight:   700,
@@ -205,8 +204,6 @@ const BlogPreview = () => {
                     >
                       {blog.title}
                     </h6>
-
-                    {/* Description */}
                     <p
                       style={{
                         color:        "#6c757d",
@@ -218,8 +215,6 @@ const BlogPreview = () => {
                     >
                       {truncateText(blog.description, 100)}
                     </p>
-
-                    {/* Read More */}
                     <div
                       style={{
                         display:    "flex",
@@ -244,6 +239,10 @@ const BlogPreview = () => {
         @keyframes shimmer {
           0%   { background-position: 200% 0; }
           100% { background-position: -200% 0; }
+        }
+        @media (max-width: 768px) {
+          .blog-preview-section { padding: 3rem 0 !important; }
+          .blog-preview-header  { margin-bottom: 1.5rem !important; }
         }
       `}</style>
     </section>
