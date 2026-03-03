@@ -101,6 +101,21 @@ const HeroBanner = () => {
           font-family: 'Syne', sans-serif;
         }
 
+        /* ── Mobile height adjustments ── */
+        @media (max-width: 768px) {
+          .hero-root {
+            height: 80vh;
+            min-height: 500px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-root {
+            height: 75vh;
+            min-height: 450px;
+          }
+        }
+
         /* ── Each slide layer stacked absolutely ── */
         .hero-slide-layer {
           position:    absolute;
@@ -121,6 +136,19 @@ const HeroBanner = () => {
           transition:         transform 6s ease;
         }
 
+        /* ── Mobile background adjustment ── */
+        @media (max-width: 768px) {
+          .hero-slide-bg {
+            background-position: 70% center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-slide-bg {
+            background-position: 75% center;
+          }
+        }
+
         .hero-slide-layer.is-active .hero-slide-bg {
           transform: scale(1);
         }
@@ -130,10 +158,22 @@ const HeroBanner = () => {
           inset:      0;
           background: linear-gradient(
             105deg,
-            rgba(0,0,0,0.72) 0%,
-            rgba(0,0,0,0.38) 55%,
-            rgba(0,0,0,0.18) 100%
+            rgba(0,0,0,0.85) 0%,
+            rgba(0,0,0,0.65) 55%,
+            rgba(0,0,0,0.45) 100%
           );
+        }
+
+        /* ── Mobile overlay adjustment ── */
+        @media (max-width: 768px) {
+          .hero-overlay {
+            background: linear-gradient(
+              90deg,
+              rgba(0,0,0,0.9) 0%,
+              rgba(0,0,0,0.7) 70%,
+              rgba(0,0,0,0.5) 100%
+            );
+          }
         }
 
         /* ── Content animations ── */
@@ -143,10 +183,33 @@ const HeroBanner = () => {
           height:        100%;
           display:       flex;
           align-items:   center;
+          padding:       0 2rem;
+        }
+
+        /* ── Mobile content padding ── */
+        @media (max-width: 768px) {
+          .hero-content {
+            padding: 0 1.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-content {
+            padding: 0 1rem;
+            align-items: flex-end;
+            padding-bottom: 5rem;
+          }
         }
 
         .hero-text-wrap {
           max-width: 680px;
+        }
+
+        /* ── Mobile text wrap width ── */
+        @media (max-width: 768px) {
+          .hero-text-wrap {
+            max-width: 100%;
+          }
         }
 
         .hero-subtitle-pill {
@@ -167,6 +230,23 @@ const HeroBanner = () => {
           animation:     heroFadeUp 0.7s ease both;
         }
 
+        /* ── Mobile subtitle adjustments ── */
+        @media (max-width: 768px) {
+          .hero-subtitle-pill {
+            font-size: 0.7rem;
+            padding: 0.35rem 1rem;
+            margin-bottom: 0.8rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-subtitle-pill {
+            font-size: 0.65rem;
+            padding: 0.3rem 0.9rem;
+            margin-bottom: 0.6rem;
+          }
+        }
+
         .hero-title {
           font-size:    clamp(2rem, 5vw, 3.6rem);
           font-weight:  900;
@@ -176,6 +256,23 @@ const HeroBanner = () => {
           letter-spacing: -1px;
           text-shadow:  0 4px 24px rgba(0,0,0,0.3);
           animation:    heroFadeUp 0.7s ease 0.1s both;
+        }
+
+        /* ── Mobile title adjustments ── */
+        @media (max-width: 768px) {
+          .hero-title {
+            font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-title {
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+          }
         }
 
         .hero-cta-btn {
@@ -200,6 +297,26 @@ const HeroBanner = () => {
         .hero-cta-btn:hover {
           transform:  translateY(-3px) scale(1.03);
           box-shadow: 0 14px 36px rgba(13,110,253,0.55);
+        }
+
+        /* ── Mobile button adjustments ── */
+        @media (max-width: 768px) {
+          .hero-cta-btn {
+            font-size: 0.95rem;
+            padding: 0.75rem 1.8rem;
+            border-radius: 12px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-cta-btn {
+            font-size: 0.85rem;
+            padding: 0.65rem 1.5rem;
+            border-radius: 10px;
+            gap: 0.4rem;
+            width: 100%;
+            justify-content: center;
+          }
         }
 
         .hero-arrow-btn {
@@ -227,6 +344,13 @@ const HeroBanner = () => {
           transform:    translateY(-50%) scale(1.1);
         }
 
+        /* ── Hide arrows on mobile ── */
+        @media (max-width: 768px) {
+          .hero-arrow-btn {
+            display: none;
+          }
+        }
+
         .hero-dot-btn {
           border:        none;
           cursor:        pointer;
@@ -239,6 +363,13 @@ const HeroBanner = () => {
         .hero-dot-btn.active {
           background: white;
           width:      32px !important;
+        }
+
+        /* ── Mobile dot adjustments ── */
+        @media (max-width: 768px) {
+          .hero-dot-btn.active {
+            width: 24px !important;
+          }
         }
 
         @keyframes heroFadeUp {
@@ -256,6 +387,8 @@ const HeroBanner = () => {
         className="hero-root"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
       >
         {/* ── All slide layers rendered, opacity toggled ── */}
         {slides.map((slide, i) => (
@@ -339,6 +472,17 @@ const HeroBanner = () => {
         >
           {String(current + 1).padStart(2, "0")} <span style={{ opacity: 0.4 }}>/ {String(total).padStart(2, "0")}</span>
         </div>
+
+        {/* ── Mobile counter adjustment ── */}
+        <style>{`
+          @media (max-width: 768px) {
+            div[style*="bottom: 2rem"][style*="right: 2rem"] {
+              bottom: 1rem !important;
+              right: 1rem !important;
+              font-size: 0.7rem !important;
+            }
+          }
+        `}</style>
 
         {/* ── Progress bar ── */}
         <div
