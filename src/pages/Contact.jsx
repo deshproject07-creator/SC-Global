@@ -34,8 +34,8 @@ const Contact = () => {
               Contact Us
             </h1>
             <p style={{ opacity: 0.8, maxWidth: "600px", margin: "1rem auto 0" }}>
-              Interested in our products? Send us an inquiry and our team
-              will respond within 24 hours.
+              Interested in our products? Send us an inquiry and <br />
+               our team will respond within 24 hours.
             </p>
           </div>
         </div>
