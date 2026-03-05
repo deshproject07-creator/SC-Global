@@ -1,4 +1,4 @@
-import {React, useEffect} from "react";
+import { React, useEffect } from "react";
 import Navbar from "../components/common/Navbar";
 import ContactForm from "../components/home/ContactForm"; // Adjust path if needed
 import Footer from "../components/common/Footer";
@@ -31,10 +31,11 @@ const Contact = () => {
                 fontSize: "2.5rem"
               }}
             >
-              Get In Touch
+              Contact Us
             </h1>
             <p style={{ opacity: 0.8, maxWidth: "600px", margin: "1rem auto 0" }}>
-              We're here to help and answer any question you might have. We look forward to hearing from you.
+              Interested in our products? Send us an inquiry and our team
+              will respond within 24 hours.
             </p>
           </div>
         </div>

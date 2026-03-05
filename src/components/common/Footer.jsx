@@ -38,7 +38,7 @@ const Footer = () => {
     { icon: <FiFacebook size={20} />,    label: "Facebook",   href: "https://facebook.com",        color: "#1877f2" },
     { icon: <FiInstagram size={20} />,   label: "Instagram",  href: "https://instagram.com/scglobal_import_export",       color: "#e4405f" },
     { icon: <FiTwitter size={20} />,     label: "Twitter / X",href: "https://twitter.com",         color: "#1da1f2" },
-    { icon: <FiMessageCircle size={20}/>,label: "WhatsApp",   href: "https://wa.me/910000000000",  color: "#25d366" },
+    { icon: <FiMessageCircle size={20}/>,label: "WhatsApp",   href: "https://wa.me/919637476454",  color: "#25d366" },
   ];
 
   return (

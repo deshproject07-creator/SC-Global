@@ -44,10 +44,9 @@ const Navbar = () => {
   }, [sidebarOpen]);
 
   const navLinks = [
-    { label: "Home", to: "/" },
-    { label: "About", to: "/about" },
+    { label: "Home",    to: "/"        },
+    { label: "About",   to: "/about"   },
     { label: "Gallery", to: "/gallery" },
-    { label: "Contact", to: "/contact" },
   ];
 
   return (
@@ -383,56 +382,15 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* ── Get a Quote CTA ── */}
-            <button
-              onClick={() => {
-                if (window.location.pathname !== "/") {
-                  navigate("/");
-                  setTimeout(() => {
-                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                  }, 300);
-                } else {
-                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
-              style={{
-                marginLeft: "0.5rem",
-                background: scrolled
-                  ? "linear-gradient(135deg, #0d6efd, #084298)"
-                  : "rgba(255,255,255,0.15)",
-                border: scrolled
-                  ? "none"
-                  : "2px solid rgba(255,255,255,0.6)",
-                backdropFilter: scrolled ? "none" : "blur(8px)",
-                borderRadius: "12px",
-                color: "white",
-                fontWeight: 700,
-                fontSize: "1rem",
-                padding: "0.65rem 1.6rem",
-                cursor: "pointer",
-                fontFamily: "Montserrat, serif",
-                boxShadow: scrolled
-                  ? "0 4px 16px rgba(13,110,253,0.35)"
-                  : "0 4px 16px rgba(0,0,0,0.2)",
-                transition: "all 0.3s ease",
-                letterSpacing: "0.2px",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = scrolled
-                  ? "0 8px 24px rgba(13,110,253,0.45)"
-                  : "0 8px 24px rgba(0,0,0,0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = scrolled
-                  ? "0 4px 16px rgba(13,110,253,0.35)"
-                  : "0 4px 16px rgba(0,0,0,0.2)";
-              }}
+            {/* ── Contact ── */}
+            <NavLink
+              to="/contact"
+              className={({ isActive }) =>
+                `nav-link-item ${scrolled ? "scrolled-link" : "transparent-link"} ${isActive ? "active-link" : ""}`
+              }
             >
-              Get a Quote
-            </button>
+              Contact
+            </NavLink>
           </div>
 
           {/* ── Mobile Hamburger ── */}
@@ -631,6 +589,17 @@ const Navbar = () => {
               {cat.name}
             </NavLink>
           ))}
+
+          {/* Contact */}
+          <NavLink
+            to="/contact"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `sidebar-nav-link${isActive ? " active-link" : ""}`
+            }
+          >
+            Contact
+          </NavLink>
         </nav>
 
         {/* Sidebar Footer */}

@@ -60,18 +60,7 @@ const ContactForm = () => {
     >
       <div className="container">
 
-        {/* ── Section Header ── */}
-        <div className="text-center mb-5">
         
-          <h2 className="section-title text-center">Contact Us</h2>
-          <p
-            className="text-muted mt-3"
-            style={{ maxWidth: 480, margin: "0.75rem auto 0" }}
-          >
-            Interested in our products? Send us an inquiry and our team
-            will respond within 24 hours.
-          </p>
-        </div>
 
         <div className="row g-4 align-items-start">
 
