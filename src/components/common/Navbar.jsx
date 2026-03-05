@@ -46,8 +46,6 @@ const Navbar = () => {
   const navLinks = [
     { label: "Home", to: "/" },
     { label: "About", to: "/about" },
-    { label: "Gallery", to: "/gallery" },
-    { label: "Blog", to: "/blog" },
     { label: "Contact", to: "/contact" },
   ];
 
@@ -239,7 +237,7 @@ const Navbar = () => {
                   fontSize: scrolled ? "1.25rem" : "1.45rem",
                   color: scrolled ? "#0d6efd" : "white",
                   letterSpacing: "0px",
-                  fontFamily: "Playfair Display, serif",
+                  fontFamily: "Montserrat, serif",
                   transition: "all 0.35s ease",
                   whiteSpace: "nowrap",
                   textShadow: scrolled ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
@@ -254,7 +252,7 @@ const Navbar = () => {
                   fontWeight: 900,
                   fontSize: "1.15rem",
                   color: scrolled ? "#0d6efd" : "white",
-                  fontFamily: "Playfair Display, serif",
+                  fontFamily: "Montserrat, serif",
                   transition: "all 0.35s ease",
                   whiteSpace: "nowrap",
                   textShadow: scrolled ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
@@ -314,7 +312,7 @@ const Navbar = () => {
                   alignItems: "center",
                   gap: "0.3rem",
                   cursor: "pointer",
-                  fontFamily: "Playfair Display, serif",
+                  fontFamily: "Montserrat, serif",
                 }}
               >
                 Products
@@ -362,7 +360,7 @@ const Navbar = () => {
                       textDecoration: "none",
                       borderBottom: "1px solid #f1f3f5",
                       background: "#f8faff",
-                      fontFamily: "Playfair Display, serif",
+                      fontFamily: "Montserrat, serif",
                     }}
                   >
                     <FiGlobe size={15} /> All Products
@@ -411,7 +409,7 @@ const Navbar = () => {
                 fontSize: "1rem",
                 padding: "0.65rem 1.6rem",
                 cursor: "pointer",
-                fontFamily: "Playfair Display, serif",
+                fontFamily: "Montserrat, serif",
                 boxShadow: scrolled
                   ? "0 4px 16px rgba(13,110,253,0.35)"
                   : "0 4px 16px rgba(0,0,0,0.2)",
@@ -527,7 +525,7 @@ const Navbar = () => {
                   color: "white",
                   fontWeight: 800,
                   fontSize: "1.05rem",
-                  fontFamily: "Playfair Display, serif",
+                  fontFamily: "Montserrat, serif",
                   lineHeight: 1.1,
                 }}
               >

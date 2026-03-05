@@ -1,8 +1,7 @@
 /* ─────────────────────────────────────────────
    GOOGLE FONTS
 ───────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
-/* ─────────────────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');/* ─────────────────────────────────────────────
    CSS VARIABLES
 ───────────────────────────────────────────── */
 :root {
@@ -38,7 +37,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family:            'DM Sans', -apple-system, serif;
+  font-family: 'Playfair Display', serif;
   color:                  var(--text-body);
   background:             #ffffff;
   line-height:            1.65;
@@ -275,7 +274,7 @@ section {
 }
 
 .page-hero-title {
-  font-family:  'Playfair Display', serif;
+  font-family:  'Montserrat', sans-serif;
   font-weight:  900;
   font-size:    clamp(2rem, 5vw, 3.2rem);
   color:        white;

@@ -99,7 +99,7 @@ const HeroBanner = () => {
           min-height: 560px;
           overflow:   hidden;
           background: #0a0f1e;
-          font-family: 'Playfair Display', serif;
+          font-family: 'Montserrat', sans-serif;
         }
 
         @media (max-width: 768px) {
@@ -184,7 +184,7 @@ const HeroBanner = () => {
           letter-spacing: -0.5px;
           text-shadow:  0 4px 24px rgba(0,0,0,0.3);
           animation:    heroFadeUp 0.7s ease 0.1s both;
-          font-family:  'Playfair Display', serif;
+          font-family:  'Montserrat', sans-serif;
         }
 
         @media (max-width: 768px) {
@@ -224,7 +224,7 @@ const HeroBanner = () => {
           cursor:        pointer;
           box-shadow:    0 8px 28px rgba(13,110,253,0.45);
           transition:    all 0.28s cubic-bezier(0.34,1.56,0.64,1);
-          font-family:   'Playfair Display', serif;
+          font-family:   'Montserrat', sans-serif;
           letter-spacing: 0.2px;
           animation:     heroFadeUp 0.7s ease 0.2s both;
         }
@@ -372,7 +372,7 @@ const HeroBanner = () => {
             color:      "rgba(255,255,255,0.65)",
             fontSize:   "0.85rem",
             fontWeight: 700,
-            fontFamily: "Playfair Display, serif",
+            fontFamily: "Montserrat, serif",
             letterSpacing: "1px",
           }}
         >

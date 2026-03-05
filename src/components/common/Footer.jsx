@@ -31,7 +31,7 @@ const Footer = () => {
     { label: "Products",   to: "/products"},
     { label: "Gallery",    to: "/gallery" },
     { label: "Blog",       to: "/blog"    },
-    { label: "Contact Us", to: "/#contact"},
+    { label: "Contact Us", to: "/contact"},
   ];
 
   const socialLinks = [
@@ -84,8 +84,8 @@ const Footer = () => {
             <div className="d-flex flex-column gap-2">
               {[
                 { icon: <FiMapPin size={14} />,  text: "Kolhapur, Maharashtra, India" },
-                { icon: <FiMail size={14} />,    text: "info@scglobal.com",   href: "mailto:info@scglobal.com" },
-                { icon: <FiPhone size={14} />,   text: "+91 00000 00000",     href: "tel:+910000000000" },
+                { icon: <FiMail size={14} />,    text: "Infoscexportimport@gmail.com",   href: "mailto:Infoscexportimport@gmail.com" },
+                { icon: <FiPhone size={14} />,   text: "+91 96374 76454",     href: "https://wa.me/919637476454" },
               ].map((item, i) => (
                 <div key={i} className="d-flex align-items-start gap-2"
                   style={{ color: "#adb5bd", fontSize: "0.82rem" }}>
