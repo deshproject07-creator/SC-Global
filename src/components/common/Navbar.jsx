@@ -313,7 +313,7 @@ const Navbar = () => {
                   alignItems: "center",
                   gap: "0.3rem",
                   cursor: "pointer",
-                  fontFamily: "Montserrat, serif",
+                  fontFamily: "Playfair Display, serif",  
                 }}
               >
                 Products
