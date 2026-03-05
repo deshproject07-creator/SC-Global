@@ -10,7 +10,7 @@ const Gallery = () => {
   const [images,   setImages]   = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [lightbox, setLightbox] = useState(null); // index of opened image
-  const [visible,  setVisible]  = useState(false);
+  const [visible,  setVisible]  = useState(false); 
 
   // ── Scroll to top ──────────────────────────
   useEffect(() => { window.scrollTo(0, 0); }, []);

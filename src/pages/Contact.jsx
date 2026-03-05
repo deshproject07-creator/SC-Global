@@ -1,29 +1,32 @@
-import React from "react";
+import {React, useEffect} from "react";
 import Navbar from "../components/common/Navbar";
 import ContactForm from "../components/home/ContactForm"; // Adjust path if needed
 import Footer from "../components/common/Footer";
 import ScrollToTop from "../components/common/ScrollToTop";
 
 const Contact = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <>
       <Navbar />
       <main>
         {/* ── Page Header / Spacer ── */}
         {/* This creates a dark blue background at the top so your transparent navbar text is visible */}
-        <div 
-          style={{ 
+        <div
+          style={{
             background: "linear-gradient(135deg, #0d6efd 0%, #084298 100%)",
-            paddingTop: "140px", 
+            paddingTop: "140px",
             paddingBottom: "60px",
             textAlign: "center",
             color: "white"
           }}
         >
           <div className="container">
-            <h1 
-              style={{ 
-                fontFamily: "'Playfair Display', serif", 
+            <h1
+              style={{
+                fontFamily: "'Playfair Display', serif",
                 fontWeight: 800,
                 fontSize: "2.5rem"
               }}

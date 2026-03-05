@@ -100,17 +100,17 @@ const ContactForm = () => {
                 {
                   icon: <FiMapPin size={18} />,
                   label: "Address",
-                  value: "SC Global Exports & Imports",
+                  value: "1090 A ward plot no 9 mohite park, swapnagri, kolhapur\n Pin code 416012",
                 },
                 {
                   icon: <FiMail size={18} />,
                   label: "Email",
-                  value: "info@scglobalexports.com",
+                  value: "Infoscexportimport@gmail.com",
                 },
                 {
                   icon: <FiPhone size={18} />,
                   label: "Phone",
-                  value: "+91 00000 00000",
+                  value: "+91 9637476454",
                 },
                 {
                   icon: <FiClock size={18} />,
@@ -120,7 +120,7 @@ const ContactForm = () => {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="d-flex gap-3 mb-4"
+                  className="d-flex gap-3 mb-4 align-items-start"
                   style={{
                     opacity: visible ? 1 : 0,
                     transform: visible ? "translateX(0)" : "translateX(-20px)",
@@ -134,6 +134,7 @@ const ContactForm = () => {
                       borderRadius: "10px",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       flexShrink: 0,
+                      alignSelf: "center",
                     }}
                   >
                     {item.icon}

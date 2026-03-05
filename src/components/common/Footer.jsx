@@ -36,7 +36,7 @@ const Footer = () => {
 
   const socialLinks = [
     { icon: <FiFacebook size={20} />,    label: "Facebook",   href: "https://facebook.com",        color: "#1877f2" },
-    { icon: <FiInstagram size={20} />,   label: "Instagram",  href: "https://instagram.com",       color: "#e4405f" },
+    { icon: <FiInstagram size={20} />,   label: "Instagram",  href: "https://instagram.com/scglobal_import_export",       color: "#e4405f" },
     { icon: <FiTwitter size={20} />,     label: "Twitter / X",href: "https://twitter.com",         color: "#1da1f2" },
     { icon: <FiMessageCircle size={20}/>,label: "WhatsApp",   href: "https://wa.me/910000000000",  color: "#25d366" },
   ];
@@ -274,7 +274,7 @@ const Footer = () => {
                 Get in touch and let us help you source premium export products for your business.
               </p>
               <button
-                onClick={() => navigate("/#contact")}
+                onClick={() => navigate("/contact")}
                 style={{
                   width:        "100%",
                   background:   "linear-gradient(135deg, #0d6efd, #084298)",
