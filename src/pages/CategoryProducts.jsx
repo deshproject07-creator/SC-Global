@@ -174,49 +174,7 @@ const CategoryProducts = () => {
         )}
 
         <div className="container" style={{ position: "relative", zIndex: 2 }}>
-          {/* Back Button */}
-          <button
-            onClick={() => navigate("/products")}
-            style={{
-              display:      "inline-flex",
-              alignItems:   "center",
-              gap:          "0.4rem",
-              background:   "rgba(255,255,255,0.15)",
-              border:       "1px solid rgba(255,255,255,0.3)",
-              borderRadius: "8px",
-              color:        "white",
-              padding:      "0.4rem 1rem",
-              fontSize:     "0.82rem",
-              fontWeight:   500,
-              cursor:       "pointer",
-              marginBottom: "1.25rem",
-              transition:   "all 0.2s ease",
-            }}
-            onMouseEnter={(e) =>
-              e.currentTarget.style.background = "rgba(255,255,255,0.25)"
-            }
-            onMouseLeave={(e) =>
-              e.currentTarget.style.background = "rgba(255,255,255,0.15)"
-            }
-          >
-            <FiArrowLeft size={14} /> All Products
-          </button>
-
-          <span
-            className="badge rounded-pill px-3 py-2 mb-3"
-            style={{
-              background: "rgba(255,255,255,0.15)",
-              color:      "white",
-              fontSize:   "0.78rem",
-              fontWeight: 600,
-              border:     "1px solid rgba(255,255,255,0.25)",
-              display:    "block",
-              width:      "fit-content",
-              margin:     "0 auto 0.75rem",
-            }}
-          >
-            Product Category
-          </span>
+         
 
           <h1
             style={{

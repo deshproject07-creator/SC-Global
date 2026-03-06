@@ -13,27 +13,26 @@ import silverImg  from "../assets/images/silver_images/silver_b.jpg";
 import "../styles/custom.css";
 
 const stats = [
-  { value: "10+",  label: "Years of Experience", icon: <FiAward size={22} />   },
-  { value: "50+",  label: "Countries Reached",   icon: <FiGlobe size={22} />   },
-  { value: "200+", label: "Products Exported",   icon: <FiShield size={22} />  },
-  { value: "50+",  label: "Happy Clients",        icon: <FiUsers size={22} />   },
+  { value: "2026", label: "Established",      icon: <FiAward size={22} />   },
+  { value: "Global", label: "Trade Vision",    icon: <FiGlobe size={22} />   },
+  { value: "100%", label: "Quality Assured",   icon: <FiUsers size={22} />   },
 ];
 
 const values = [
   {
     icon:  <FiShield size={26} />,
     title: "Quality First",
-    desc:  "Every product is thoroughly inspected and quality-checked before export to ensure international standards are met.",
+    desc:  "Every product is thoroughly inspected and quality-checked before export to ensure it meets international standards.",
   },
   {
     icon:  <FiTruck size={26} />,
     title: "Timely Delivery",
-    desc:  "We understand the importance of deadlines in global trade. Our logistics network ensures on-time delivery every time.",
+    desc:  "We understand the importance of deadlines in global trade and are committed to on-time delivery from day one.",
   },
   {
     icon:  <FiGlobe size={26} />,
-    title: "Global Reach",
-    desc:  "With a strong network across 50+ countries, we connect quality Indian products with international markets seamlessly.",
+    title: "Global Ambition",
+    desc:  "Though we are just getting started, our vision is to connect quality Indian products with international markets worldwide.",
   },
   {
     icon:  <FiCheckCircle size={26} />,
@@ -47,8 +46,8 @@ const values = [
   },
   {
     icon:  <FiAward size={26} />,
-    title: "Trusted Brand",
-    desc:  "Over a decade of consistent quality and service has built SC Global into a trusted name in international trade.",
+    title: "Building Trust",
+    desc:  "As a new company, we are committed to earning trust through consistent quality, reliability, and genuine service.",
   },
 ];
 
@@ -97,8 +96,8 @@ const About = () => {
               lineHeight: 1.7,
             }}
           >
-            Your trusted partner in global trade — delivering quality,
-            reliability, and excellence since over a decade.
+            Your trusted partner in global trade — a new company
+            with a bold vision to deliver quality Indian products worldwide.
           </p>
         </div>
       </section>
@@ -138,10 +137,10 @@ const About = () => {
                   }}
                 >
                   <div style={{ color: "white", fontWeight: 800, fontSize: "1.8rem", lineHeight: 1 }}>
-                    10+
+                    2026
                   </div>
                   <div style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", marginTop: 4, fontWeight: 500 }}>
-                    Years of Trust
+                    Established
                   </div>
                 </div>
               </div>
@@ -167,32 +166,32 @@ const About = () => {
                 SC Global Exports & Imports
               </h2>
               <p style={{ color: "#5a5a7a", lineHeight: 1.8, marginBottom: "1rem" }}>
-                SC Global Exports & Imports is a premier export company
-                headquartered in Kolhapur, Maharashtra, India. Founded with
-                a vision to connect the finest Indian products with
-                international markets, we have grown into a trusted name
-                in global trade over the past decade.
+                SC Global Exports & Imports is a fresh and ambitious export
+                company headquartered in Kolhapur, Maharashtra, India. Established
+                in 2026, we are at the beginning of an exciting journey — building
+                a bridge between India's finest products and international buyers
+                across the world.
               </p>
               <p style={{ color: "#5a5a7a", lineHeight: 1.8, marginBottom: "1rem" }}>
                 We specialize in exporting premium quality products including
-                cashew nuts, rice varieties, and certified silver products
-                to buyers across 50+ countries. Our team of experienced
-                trade professionals ensures every shipment meets the highest
-                international quality standards.
+                cashew nuts, rice varieties, and certified silver products.
+                Though we are a startup, our team brings deep knowledge of
+                international trade and a strong commitment to quality and
+                transparency in every shipment.
               </p>
               <p style={{ color: "#5a5a7a", lineHeight: 1.8, marginBottom: "2rem" }}>
-                Our commitment to quality, transparency, and on-time delivery
-                has earned us long-term relationships with clients across
-                the UAE, China, Brazil, Nigeria, Germany, and many more
-                countries worldwide.
+                Our goal is to build long-term relationships with international
+                buyers who value quality, reliability, and honest business
+                dealings. We are just getting started — and we're excited
+                about the journey ahead.
               </p>
 
               {/* Contact Info */}
               <div className="d-flex flex-column gap-2">
                 {[
-                  { icon: <FiMapPin size={15} />, text: "Kolhapur, Maharashtra, India" },
-                  { icon: <FiMail   size={15} />, text: "info@scglobal.com"            },
-                  { icon: <FiPhone  size={15} />, text: "+91 00000 00000"              },
+                  { icon: <FiMapPin size={15} />, text: "1090 A ward plot no 9 mohite park, swapnagri, Kolhapur 416012" },
+                  { icon: <FiMail   size={15} />, text: "Infoscexportimport@gmail.com" },
+                  { icon: <FiPhone  size={15} />, text: "+91 96374 76454"               },
                 ].map((item, i) => (
                   <div
                     key={i}
@@ -226,7 +225,7 @@ const About = () => {
         <div className="container">
           <div className="row g-4 text-center">
             {stats.map((stat, i) => (
-              <div key={i} className="col-6 col-md-3">
+              <div key={i} className="col-6 col-md-4">
                 <div style={{ color: "rgba(255,255,255,0.75)", marginBottom: "0.5rem" }}>
                   {stat.icon}
                 </div>
@@ -294,11 +293,11 @@ const About = () => {
                   Our Mission
                 </h4>
                 <p style={{ color: "#5a5a7a", lineHeight: 1.8, marginBottom: 0 }}>
-                  To be the most reliable and trusted export partner for
-                  international buyers by consistently delivering premium
-                  quality Indian products with transparency, integrity,
-                  and on-time delivery. We aim to build lasting relationships
-                  that go beyond mere transactions.
+                  To become a reliable and trusted export partner for
+                  international buyers by delivering premium quality Indian
+                  products with full transparency and on-time delivery. We
+                  aim to build lasting relationships that go beyond transactions
+                  — starting from day one.
                 </p>
               </div>
             </div>
@@ -334,11 +333,11 @@ const About = () => {
                   Our Vision
                 </h4>
                 <p style={{ color: "#5a5a7a", lineHeight: 1.8, marginBottom: 0 }}>
-                  To expand our global footprint and become a leading
-                  exporter from India, known for exceptional quality and
-                  unmatched service. We envision a future where SC Global
-                  is synonymous with trust, quality, and excellence in
-                  international trade.
+                  To grow SC Global into a leading export company from India,
+                  known for exceptional quality and unmatched service. We
+                  envision a future where SC Global is a trusted name in
+                  international trade — connecting Indian excellence with
+                  the world.
                 </p>
               </div>
             </div>
@@ -468,7 +467,7 @@ const About = () => {
             the finest Indian export products for your business.
           </p>
           <a
-            href="/#contact"
+            href="/contact"
             style={{
               display:      "inline-flex",
               alignItems:   "center",
