@@ -4,32 +4,39 @@ import "../../styles/custom.css";
 
 const testimonials = [
   {
-    name: "Ahmed Al-Rashid",
-    company: "Al-Rashid Trading Co.",
-    country: "🇦🇪 UAE",
-    rating: 5,
-    text: "SC Global has been our trusted partner for over 3 years. Their quality consistency and on-time delivery have never disappointed us. Highly recommended for any serious importer.",
+  name: "Michael Thompson",
+  company: "Thompson Global Foods Inc.",
+  country: "🇺🇸 USA",
+  rating: 5,
+  text: "SC Global delivers exactly what they promise. Our shipments arrived on schedule and the packaging quality was excellent. Their professionalism makes them a reliable supplier for international buyers."
   },
   {
-    name: "Zhang Wei",
-    company: "Sino Import Solutions",
-    country: "🇨🇳 China",
-    rating: 5,
-    text: "Exceptional service from start to finish. The team at SC Global understands international trade requirements and always ensures smooth transactions. A reliable partner indeed.",
+  name: "Rahul Mehta",
+  company: "Mehta Agro Traders",
+  country: "🇮🇳 India",
+  rating: 5,
+  text: "We have sourced multiple consignments through SC Global and the experience has been excellent. Their commitment to quality and timely dispatch makes them a trustworthy export partner."
   },
   {
-    name: "Maria Santos",
-    company: "Santos Global Ventures",
-    country: "🇧🇷 Brazil",
-    rating: 5,
-    text: "We have been importing agricultural products from SC Global for 2 years now. The quality is always top-notch and pricing is very competitive. Great company to work with!",
+  name: "Sergey Ivanov",
+  company: "Volga Import Group",
+  country: "🇷🇺 Russia",
+  rating: 5,
+  text: "SC Global has proven to be a dependable export partner. Their attention to packaging standards and documentation helped us receive shipments without delays. Highly professional team."
   },
   {
-    name: "David Okonkwo",
-    company: "West Africa Trade Hub",
-    country: "🇳🇬 Nigeria",
-    rating: 5,
-    text: "Found SC Global through a referral and have never looked back. Professional team, transparent communication, and products that always meet our specifications perfectly.",
+  name: "Khalid Al-Mansoori",
+  company: "Al Mansoori General Trading LLC",
+  country: "🇦🇪 UAE",
+  rating: 5,
+  text: "Working with SC Global Import Export has been a great experience. Their team maintains excellent communication and the product quality consistently meets our import standards. We look forward to continuing this partnership."
+  },
+  {
+  name: "Priya Sharma",
+  company: "Sharma International Foods",
+  country: "🇮🇳 India",
+  rating: 5,
+  text: "SC Global Import Export maintains very high standards in product quality and logistics support. Their team is cooperative and responsive, which makes long-term business relationships easy."
   },
   {
     name: "Lena Müller",
