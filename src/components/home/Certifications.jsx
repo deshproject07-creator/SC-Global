@@ -7,29 +7,49 @@ import udyogAadhar from "../../assets/images/certifications/udyog-aadhar_logo.jp
 import satyamev    from "../../assets/images/certifications/satyamev_jayte_logo.jpg";
 
 const certifications = [
-  { id: 1, image: aapliSeva,   label: "Aapli Seva"       },
-  { id: 2, image: msme,        label: "MSME"              },
-  { id: 3, image: udyogAadhar, label: "Udyog Aadhar"      },
-  { id: 4, image: satyamev,    label: "Satyamev Jayate"   },
+  { id: 1, image: aapliSeva,   label: "Aapli Seva"     },
+  { id: 2, image: msme,        label: "MSME"            },
+  { id: 3, image: udyogAadhar, label: "Udyog Aadhar"    },
+  { id: 4, image: satyamev,    label: "Satyamev Jayate" },
 ];
 
-// Duplicate for infinite loop effect
-const ITEMS = [...certifications, ...certifications, ...certifications];
+// Triple-clone so the infinite loop never shows a gap
+const ITEMS        = [...certifications, ...certifications, ...certifications];
+const AUTO_INTERVAL = 3000;
 
-const CARD_WIDTH    = 220; // px per card (desktop)
-const CARD_GAP      = 24;  // px gap between cards
-const VISIBLE_COUNT = 3;   // cards visible at once
-const AUTO_INTERVAL = 3000; // ms
+// ── Desktop constants ─────────────────────
+const D_CARD  = 220; // card width  (px)
+const D_GAP   = 28;  // gap between cards (px)
+const D_STEP  = D_CARD + D_GAP;
+
+// ── Mobile constants ──────────────────────
+// Each card is 26vw wide, gap is 3vw.
+// To centre the middle card we offset by:
+//   -(index * step) + (viewport/2 - card/2)
+// We do this in CSS via a calc trick.
+const M_CARD_VW = 26;
+const M_GAP_VW  = 3;
+const M_STEP_VW = M_CARD_VW + M_GAP_VW; // 29vw per step
 
 const Certifications = () => {
-  const [currentIndex, setCurrentIndex] = useState(certifications.length); // start at middle clone
+  // currentIndex always points to the "active" position in the ITEMS array
+  // Start at certifications.length so we're in the middle clone set
+  const [currentIndex, setCurrentIndex]       = useState(certifications.length);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isPaused, setIsPaused]               = useState(false);
   const [visible, setVisible]                 = useState(false);
+  const [isMobile, setIsMobile]               = useState(window.innerWidth < 768);
+  const touchStartX = useRef(null);
   const sectionRef  = useRef(null);
-  const intervalRef = useRef(null);
 
-  // ── Scroll animation ──────────────────────
+  // ── Resize detection ──────────────────────
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // ── Scroll-in animation ───────────────────
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true); },
@@ -39,33 +59,24 @@ const Certifications = () => {
     return () => observer.disconnect();
   }, []);
 
-  // ── Auto scroll ───────────────────────────
+  // ── Auto-scroll ───────────────────────────
   useEffect(() => {
     if (isPaused) return;
-    intervalRef.current = setInterval(() => {
-      goNext();
-    }, AUTO_INTERVAL);
-    return () => clearInterval(intervalRef.current);
+    const t = setInterval(goNext, AUTO_INTERVAL);
+    return () => clearInterval(t);
   }, [isPaused, currentIndex]);
 
-  // ── Infinite loop jump (no animation) ─────
+  // ── Infinite loop: silent jump at boundaries ──
   useEffect(() => {
-    const total = certifications.length;
-    if (currentIndex >= total * 2) {
-      setTimeout(() => {
-        setIsTransitioning(false);
-        setCurrentIndex(total);
-      }, 400);
+    const n = certifications.length;
+    if (currentIndex >= n * 2) {
+      setTimeout(() => { setIsTransitioning(false); setCurrentIndex(n); }, 430);
     }
-    if (currentIndex < total) {
-      setTimeout(() => {
-        setIsTransitioning(false);
-        setCurrentIndex(total * 2 - 1);
-      }, 400);
+    if (currentIndex < n) {
+      setTimeout(() => { setIsTransitioning(false); setCurrentIndex(n * 2 - 1); }, 430);
     }
   }, [currentIndex]);
 
-  // Re-enable transition after jump
   useEffect(() => {
     if (!isTransitioning) {
       const t = setTimeout(() => setIsTransitioning(true), 50);
@@ -76,82 +87,82 @@ const Certifications = () => {
   const goNext = () => setCurrentIndex((i) => i + 1);
   const goPrev = () => setCurrentIndex((i) => i - 1);
 
-  const translateX = -(currentIndex * (CARD_WIDTH + CARD_GAP));
+  // Touch swipe
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd   = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) diff > 0 ? goNext() : goPrev();
+    touchStartX.current = null;
+  };
+
+  // Active dot (0-based within certifications[])
+  const activeDot =
+    ((currentIndex - certifications.length) % certifications.length
+      + certifications.length) % certifications.length;
+
+  // ── Desktop translateX ────────────────────
+  // We want the card at currentIndex to sit in the MIDDLE of the 3-card viewport.
+  // Viewport width = 3*D_CARD + 2*D_GAP
+  // Left edge of card[currentIndex] = currentIndex * D_STEP
+  // To centre it: shift so that card left = D_STEP (one card + one gap from left)
+  const desktopTranslateX = -(currentIndex * D_STEP - D_STEP);
 
   return (
     <section
       ref={sectionRef}
-      style={{
-        padding: "5rem 0",
-        background: "#f8faff",
-        overflow: "hidden",
-      }}
+      style={{ padding: "5rem 0", background: "#f8faff", overflow: "hidden" }}
     >
       <style>{`
+
+        /* ════════════════════════════════════
+           SHARED
+        ════════════════════════════════════ */
         .cert-track {
           display: flex;
-          gap: ${CARD_GAP}px;
+          align-items: center;
           will-change: transform;
         }
+
         .cert-card {
           flex-shrink: 0;
-          width: ${CARD_WIDTH}px;
           background: white;
           border-radius: 16px;
-          padding: 2rem 1.5rem 1.5rem;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 1rem;
-          box-shadow: 0 2px 12px rgba(13,110,253,0.07);
           border: 1.5px solid rgba(13,110,253,0.08);
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          box-shadow: 0 2px 12px rgba(13,110,253,0.07);
           cursor: default;
-        }
-        .cert-card:hover {
-          box-shadow: 0 8px 28px rgba(13,110,253,0.13);
+          transition:
+            transform    0.45s cubic-bezier(0.4,0,0.2,1),
+            opacity      0.45s ease,
+            filter       0.45s ease,
+            box-shadow   0.45s ease,
+            border-color 0.45s ease,
+            background   0.45s ease;
         }
 
-        /* ── Side cards: dimmed & slightly smaller ── */
         .cert-card-side {
-          transform: scale(0.9);
-          opacity: 0.55;
-          filter: grayscale(30%);
-          transition: transform 0.4s cubic-bezier(0.4,0,0.2,1),
-                      opacity 0.4s ease,
-                      filter 0.4s ease,
-                      box-shadow 0.4s ease;
+          transform: scale(0.88);
+          opacity: 0.42;
+          filter: grayscale(35%);
         }
 
-        /* ── Center card: zoomed in, vivid, glowing ── */
         .cert-card-active {
-          transform: scale(1.1);
+          transform: scale(1.12);
           opacity: 1;
           filter: none;
-          border-color: rgba(13,110,253,0.35);
+          border-color: rgba(13,110,253,0.38);
           box-shadow:
-            0 0 0 3px rgba(13,110,253,0.12),
-            0 12px 40px rgba(13,110,253,0.22);
-          background: linear-gradient(160deg, #ffffff 60%, #eef4ff 100%);
-          z-index: 2;
+            0 0 0 3px rgba(13,110,253,0.13),
+            0 14px 44px rgba(13,110,253,0.24);
+          background: linear-gradient(160deg, #ffffff 55%, #eef4ff 100%);
           position: relative;
-          transition: transform 0.4s cubic-bezier(0.4,0,0.2,1),
-                      opacity 0.4s ease,
-                      box-shadow 0.4s ease,
-                      border-color 0.4s ease;
+          z-index: 2;
         }
 
-        /* ── Center image wrap: larger + glowing ring ── */
-        .cert-img-wrap-active {
-          width: 128px !important;
-          height: 128px !important;
-          border: 2px solid rgba(13,110,253,0.3) !important;
-          box-shadow: 0 0 0 5px rgba(13,110,253,0.08);
-          background: #e8f0fe !important;
-        }
         .cert-img-wrap {
-          width: 110px;
-          height: 110px;
           border-radius: 12px;
           overflow: hidden;
           background: #f0f4ff;
@@ -159,32 +170,39 @@ const Certifications = () => {
           align-items: center;
           justify-content: center;
           border: 1px solid rgba(13,110,253,0.1);
+          transition:
+            width        0.45s ease,
+            height       0.45s ease,
+            box-shadow   0.45s ease,
+            border-color 0.45s ease,
+            background   0.45s ease;
         }
         .cert-img-wrap img {
-          width: 100%;
-          height: 100%;
+          width: 100%; height: 100%;
           object-fit: contain;
-          padding: 8px;
         }
+        .cert-img-wrap-active {
+          border: 2px solid rgba(13,110,253,0.32) !important;
+          box-shadow: 0 0 0 6px rgba(13,110,253,0.08) !important;
+          background: #e8f0fe !important;
+        }
+
         .cert-label {
           font-family: 'DM Sans', sans-serif;
-          font-size: 0.9rem;
           font-weight: 600;
           color: #1a1a2e;
           text-align: center;
+          line-height: 1.3;
         }
         .cert-badge {
-          font-size: 0.7rem;
           background: #e8f0fe;
           color: #0d6efd;
           border-radius: 20px;
-          padding: 2px 10px;
           font-weight: 500;
           letter-spacing: 0.02em;
         }
+
         .cert-arrow-btn {
-          width: 44px;
-          height: 44px;
           border-radius: 50%;
           border: 1.5px solid rgba(13,110,253,0.2);
           background: white;
@@ -193,8 +211,8 @@ const Certifications = () => {
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s ease;
           flex-shrink: 0;
+          transition: all 0.2s ease;
         }
         .cert-arrow-btn:hover {
           background: #0d6efd;
@@ -202,16 +220,16 @@ const Certifications = () => {
           border-color: #0d6efd;
           box-shadow: 0 4px 12px rgba(13,110,253,0.25);
         }
+
         .cert-dots {
           display: flex;
           gap: 6px;
           align-items: center;
           justify-content: center;
-          margin-top: 1.5rem;
+          margin-top: 2rem;
         }
         .cert-dot {
-          width: 7px;
-          height: 7px;
+          width: 7px; height: 7px;
           border-radius: 50%;
           background: #adb5bd;
           transition: all 0.25s ease;
@@ -223,9 +241,55 @@ const Certifications = () => {
           border-radius: 4px;
         }
 
+        /* ════════════════════════════════════
+           DESKTOP ≥ 769px
+           Viewport = exactly 3 cards wide.
+           Track slides so active card is always centre.
+        ════════════════════════════════════ */
+        @media (min-width: 769px) {
+          .cert-viewport {
+            width: ${3 * D_CARD + 2 * D_GAP}px;   /* 716px */
+            overflow: hidden;
+            /* allow scale(1.12) to breathe without clipping */
+            padding: 24px 0;
+            margin: -24px 0;
+          }
+          .cert-track         { gap: ${D_GAP}px; }
+          .cert-card          { width: ${D_CARD}px; padding: 2rem 1.5rem 1.5rem; gap: 1rem; }
+          .cert-img-wrap      { width: 110px; height: 110px; }
+          .cert-img-wrap img  { padding: 8px; }
+          .cert-img-wrap-active { width: 130px !important; height: 130px !important; }
+          .cert-label         { font-size: 0.9rem; }
+          .cert-badge         { font-size: 0.7rem; padding: 2px 10px; }
+          .cert-arrow-btn     { width: 44px; height: 44px; }
+        }
+
+        /* ════════════════════════════════════
+           MOBILE ≤ 768px
+           Viewport full flex-1.
+           Cards are ${M_CARD_VW}vw wide, gap ${M_GAP_VW}vw.
+           Active card is translated to centre of viewport.
+        ════════════════════════════════════ */
         @media (max-width: 768px) {
-          .cert-card { width: 72vw; }
-          .cert-slider-viewport { max-width: 100% !important; }
+          .cert-viewport {
+            flex: 1;
+            overflow: hidden;
+            padding: 14px 0;
+            margin: -14px 0;
+          }
+          .cert-track         { gap: ${M_GAP_VW}vw; }
+          .cert-card          {
+            width: ${M_CARD_VW}vw;
+            padding: 1rem 0.5rem;
+            gap: 0.6rem;
+            border-radius: 12px;
+          }
+          .cert-img-wrap      { width: 48px; height: 48px; }
+          .cert-img-wrap img  { padding: 5px; }
+          .cert-img-wrap-active { width: 60px !important; height: 60px !important; }
+          .cert-label         { font-size: 0.68rem; }
+          .cert-badge         { display: none; }
+          .cert-arrow-btn     { width: 36px; height: 36px; }
         }
       `}</style>
 
@@ -276,36 +340,50 @@ const Certifications = () => {
           }}
         >
           <div
-            className="d-flex align-items-center gap-3"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: isMobile ? "6px" : "16px",
+              justifyContent: "center",
+            }}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
           >
-            {/* Prev Arrow */}
+            {/* Prev */}
             <button className="cert-arrow-btn" onClick={goPrev} aria-label="Previous">
-              <FiChevronLeft size={20} />
+              <FiChevronLeft size={isMobile ? 16 : 20} />
             </button>
 
             {/* Viewport */}
-            <div
-              className="cert-slider-viewport"
-              style={{
-                overflow: "hidden",
-                maxWidth: `${VISIBLE_COUNT * (CARD_WIDTH + CARD_GAP) - CARD_GAP}px`,
-                margin: "0 auto",
-                flex: 1,
-              }}
-            >
+            <div className="cert-viewport">
               <div
                 className="cert-track"
                 style={{
-                  transform: `translateX(${translateX}px)`,
-                  transition: isTransitioning ? "transform 0.4s cubic-bezier(0.4,0,0.2,1)" : "none",
-                  alignItems: "center",
+                  transform: isMobile
+                    // Centre the active card:
+                    // offset = -(index * step_vw) + 50vw - (card/2 + gap/2 ... actually half-step)
+                    // Simpler: shift track so active card centre = viewport centre
+                    // viewport = 100% of flex-1 ≈ (100vw - arrows - gaps)
+                    // We approximate viewport as ~(100vw - 80px) for mobile
+                    // Centre of viewport = (100vw - 80px)/2
+                    // Centre of active card from track start = currentIndex*step + card/2
+                    // translateX = viewport_centre - active_card_centre
+                    //            = (100vw-80px)/2 - (currentIndex*step_vw + card/2_vw)
+                    ? `translateX(calc(
+                        (100vw - 80px) / 2
+                        - ${currentIndex} * ${M_STEP_VW}vw
+                        - ${M_CARD_VW / 2}vw
+                      ))`
+                    : `translateX(${desktopTranslateX}px)`,
+                  transition: isTransitioning
+                    ? "transform 0.45s cubic-bezier(0.4,0,0.2,1)"
+                    : "none",
                 }}
               >
                 {ITEMS.map((cert, idx) => {
-                  // The middle card of the 3 visible ones is at currentIndex + 1
-                  const isCenter = idx === currentIndex + 1;
+                  const isCenter = idx === currentIndex;
                   return (
                     <div
                       key={idx}
@@ -322,9 +400,9 @@ const Certifications = () => {
               </div>
             </div>
 
-            {/* Next Arrow */}
+            {/* Next */}
             <button className="cert-arrow-btn" onClick={goNext} aria-label="Next">
-              <FiChevronRight size={20} />
+              <FiChevronRight size={isMobile ? 16 : 20} />
             </button>
           </div>
 
@@ -333,10 +411,7 @@ const Certifications = () => {
             {certifications.map((_, i) => (
               <div
                 key={i}
-                className={`cert-dot ${
-                  ((currentIndex - certifications.length) % certifications.length + certifications.length) % certifications.length === i
-                    ? "active" : ""
-                }`}
+                className={`cert-dot ${activeDot === i ? "active" : ""}`}
                 onClick={() => setCurrentIndex(certifications.length + i)}
               />
             ))}
