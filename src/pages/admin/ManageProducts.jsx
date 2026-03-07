@@ -133,8 +133,8 @@ const ManageProducts = () => {
       toast.error("Only JPG, PNG, and WEBP images are allowed.");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be less than 5MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Image must be less than 10MB.");
       return;
     }
     setImageFile(file);
@@ -476,10 +476,12 @@ const ManageProducts = () => {
                  borderRadius: 0,
                  height:       "100%",
                  maxHeight:    "100%",
-               } : { borderRadius: 16 }}
+                 display:      "flex",
+                 flexDirection: "column",
+               } : { borderRadius: 16, maxHeight: "90vh", display: "flex", flexDirection: "column" }}
             >
               {/* Modal Header */}
-              <div className="modal-header border-0 pb-0">
+              <div className="modal-header border-0 pb-0" style={{ flexShrink: 0 }}>
                 <h5 className="modal-title fw-bold">
                   {editingId ? "Edit Product" : "Add New Product"}
                 </h5>
@@ -490,8 +492,8 @@ const ManageProducts = () => {
                    style={{ minWidth: 44, minHeight: 44 }}
                 />
               </div>
-              <form onSubmit={handleSave}>
-                <div className="modal-body p-4">
+              <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden" }}>
+                <div className="modal-body p-4" style={{ overflowY: "auto", flex: 1 }}>
 
                   {/* Category */}
                   <div className="mb-3">
@@ -647,7 +649,7 @@ const ManageProducts = () => {
 
                 </div>
                  {/* Modal Footer */}
-                <div className="modal-footer border-0 pt-0">
+                <div className="modal-footer border-0 pt-0" style={{ flexShrink: 0 }}>
                   <button 
                      type="button" 
                      className="btn btn-light" 
