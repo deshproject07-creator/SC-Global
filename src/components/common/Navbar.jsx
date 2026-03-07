@@ -243,7 +243,7 @@ const Navbar = () => {
                   textShadow: scrolled ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
                 }}
               >
-                SC Global Imports & Exports
+                SC Global Exports & Imports
               </div>
               {/* Short name — mobile only */}
               <div

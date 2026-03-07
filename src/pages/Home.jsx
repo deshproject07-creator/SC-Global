@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Navbar             from "../components/common/Navbar";
 import HeroBanner         from "../components/home/HeroBanner";
 import AboutPreview       from "../components/home/AboutPreview";
@@ -5,10 +6,14 @@ import FeaturedCategories from "../components/home/FeaturedCategories";
 import GalleryPreview     from "../components/home/GalleryPreview";
 import BlogPreview        from "../components/home/BlogPreview";
 import Testimonials       from "../components/home/Testimonials";
+import Certifications     from "../components/home/Certifications";
 import Footer             from "../components/common/Footer";
-import ScrollToTop        from "../components/common/ScrollToTop";
 
 const Home = () => {
+
+  // ── Scroll to top ──────────────────────────
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   return (
     <>
       <Navbar />
@@ -31,10 +36,13 @@ const Home = () => {
         {/* 6. Testimonials */}
         <Testimonials />
 
+        {/* 7. Certifications */}
+        <Certifications />
+
       </main>
 
       <Footer />
-      <ScrollToTop />
+
     </>
   );
 };

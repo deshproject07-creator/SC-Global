@@ -157,6 +157,7 @@ const CategoryProducts = () => {
           textAlign:    "center",
           position:     "relative",
           overflow:     "hidden",
+          paddingTop: "100px",
         }}
       >
         {/* Background image overlay */}

@@ -59,6 +59,7 @@ const Products = () => {
           background: "linear-gradient(135deg, #0d6efd 0%, #084298 100%)",
           padding:    "4rem 0 3rem",
           textAlign:  "center",
+          paddingTop: "100px",
         }}
       >
         <div className="container">

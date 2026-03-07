@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import emailjs from "@emailjs/browser";
 import { addInquiry } from "../../firebase/firestore";
 import { toast } from "react-toastify";
 import {
@@ -7,10 +8,17 @@ import {
 } from "react-icons/fi";
 import "../../styles/custom.css";
 
+// ── EmailJS Config ─────────────────────────────────────────────
+// Replace these three values with your own from emailjs.com
+const EMAILJS_SERVICE_ID  = "service_80i0phf";   // e.g. "service_abc123"
+const EMAILJS_TEMPLATE_ID = "template_hui360p";  // e.g. "template_xyz456"
+const EMAILJS_PUBLIC_KEY  = "-P4CjqMWq0XrRokcM";   // e.g. "aBcDeFgHiJkLmNoP"
+// ──────────────────────────────────────────────────────────────
+
 const emptyForm = { name: "", email: "", phone: "", message: "" };
 
 const ContactForm = () => {
-  const [formData, setFormData]   = useState(emptyForm);
+  const [formData, setFormData]     = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted]   = useState(false);
   const [visible, setVisible]       = useState(false);
@@ -29,6 +37,8 @@ const ContactForm = () => {
   // ── Handle Submit ──────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       toast.error("Please fill in all required fields.");
       return;
@@ -38,13 +48,34 @@ const ContactForm = () => {
       toast.error("Please enter a valid email address.");
       return;
     }
+
     setSubmitting(true);
+
     try {
+      // ── 1. Send email via EmailJS ──────────
+      // These keys must match the variable names in your EmailJS template
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name:    formData.name,
+          from_email:   formData.email,
+          phone:        formData.phone || "Not provided",
+          message:      formData.message,
+          reply_to:     formData.email,
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+
+      // ── 2. Also save to Firestore (keep existing behaviour) ──
       await addInquiry(formData);
+
       setSubmitted(true);
       setFormData(emptyForm);
       toast.success("Your inquiry has been sent! We'll get back to you shortly. 🎉");
-    } catch {
+
+    } catch (err) {
+      console.error("Submission error:", err);
       toast.error("Failed to send inquiry. Please try again.");
     } finally {
       setSubmitting(false);
@@ -60,8 +91,6 @@ const ContactForm = () => {
     >
       <div className="container">
 
-        
-
         <div className="row g-4 align-items-start">
 
           {/* ── Left: Contact Info ── */}
@@ -73,7 +102,6 @@ const ContactForm = () => {
               transition: "all 0.6s ease 0.1s",
             }}
           >
-            {/* Info Card */}
             <div
               style={{
                 background: "linear-gradient(135deg, #0d6efd 0%, #084298 100%)",
@@ -139,7 +167,6 @@ const ContactForm = () => {
                 </div>
               ))}
 
-              {/* Social / Global */}
               <div
                 className="d-flex align-items-center gap-2 mt-2 pt-3"
                 style={{ borderTop: "1px solid rgba(255,255,255,0.2)" }}

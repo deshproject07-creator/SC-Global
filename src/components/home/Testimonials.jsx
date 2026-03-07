@@ -238,57 +238,6 @@ const Testimonials = () => {
           </div>
         </div>
 
-        {/* ── All Testimonials Preview (mini cards) ── */}
-        <div className="row g-3 mt-4 d-none d-lg-flex">
-          {testimonials.map((t, i) => (
-            <div
-              key={i}
-              className="col"
-              onClick={() => { goTo(i, i > current ? "right" : "left"); resetAuto(); }}
-              style={{ cursor: "pointer" }}
-            >
-              <div
-                style={{
-                  padding: "0.85rem 1rem",
-                  borderRadius: 12,
-                  border: `2px solid ${i === current ? "#0d6efd" : "#e9ecef"}`,
-                  background: i === current ? "#e8f0fe" : "white",
-                  transition: "all 0.25s ease",
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: 36, height: 36,
-                    borderRadius: "50%",
-                    background: i === current
-                      ? "linear-gradient(135deg, #0d6efd, #084298)"
-                      : "#f1f3f5",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: i === current ? "white" : "#6c757d",
-                    fontWeight: 700, fontSize: "0.9rem",
-                    margin: "0 auto 0.5rem",
-                  }}
-                >
-                  {t.name.charAt(0)}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: i === current ? "#0d6efd" : "#1a1a2e",
-                  }}
-                >
-                  {t.name.split(" ")[0]}
-                </div>
-                <div style={{ fontSize: "0.65rem", color: "#6c757d" }}>
-                  {t.country}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
       </div>
     </section>
   );

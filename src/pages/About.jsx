@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Navbar    from "../components/common/Navbar";
 import Footer    from "../components/common/Footer";
-import ScrollToTop from "../components/common/ScrollToTop";
 import {
   FiAward, FiGlobe, FiShield, FiTruck,
   FiUsers, FiCheckCircle, FiMapPin, FiMail, FiPhone
@@ -65,7 +64,6 @@ const About = () => {
   return (
     <>
       <Navbar />
-
       {/* ══════════════════════════════════════
           PAGE HERO
       ══════════════════════════════════════ */}
@@ -74,6 +72,7 @@ const About = () => {
           background: "linear-gradient(135deg, #0d6efd 0%, #084298 100%)",
           padding:    "4rem 0 3rem",
           textAlign:  "center",
+          paddingTop: "100px",
         }}
       >
         <div className="container">
@@ -497,7 +496,7 @@ const About = () => {
       </section>
 
       <Footer />
-      <ScrollToTop />
+      
     </>
   );
 };

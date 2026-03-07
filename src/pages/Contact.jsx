@@ -17,7 +17,7 @@ const Contact = () => {
         <div
           style={{
             background: "linear-gradient(135deg, #0d6efd 0%, #084298 100%)",
-            paddingTop: "140px",
+            paddingTop: "100px",
             paddingBottom: "60px",
             textAlign: "center",
             color: "white"

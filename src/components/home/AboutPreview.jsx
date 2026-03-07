@@ -5,7 +5,7 @@ import welcomeImg from "../../assets/images/company_images/SC-Global.jpeg";
 import "../../styles/custom.css";
 
 const stats = [
-    { icon: <FiTarget size={20} />, value: "2026", label: "Established" },
+    { icon: <FiTarget size={20} />, value: "Startup", label: "Stage" },
     { icon: <FiGlobe size={20} />,  value: "Global", label: "Trade Vision" },
     { icon: <FiShield size={20} />, value: "100%", label: "Quality Assured" },
 ];
