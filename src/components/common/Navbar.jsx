@@ -271,9 +271,10 @@ const Navbar = () => {
                   textTransform: "uppercase",
                   fontFamily: "DM Sans, sans-serif",
                   transition: "color 0.35s ease",
+                  marginTop: "4px"
                 }}
               >
-                International Trade Partner
+                Delivering Quality Worldwide 
               </div>
             </div>
           </Link>
